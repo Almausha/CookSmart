@@ -205,6 +205,7 @@ const SocialCookingFeedSchema = new Schema({
   },
 
   photoUrl: String,
+  caption: String,
 
   likes: [{
     type: Schema.Types.ObjectId,
