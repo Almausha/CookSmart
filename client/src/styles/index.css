@@ -1,0 +1,19 @@
+@import "./fonts.css";        /* আপনার ফন্ট ফ্যামিলি */
+@import "./theme.css";        /* আগে থিম ভ্যারিয়েবল (light-orange) */
+@import "./tailwind.css";     /* তারপর Tailwind যাতে ভ্যারিয়েবলগুলো ব্যবহার হয় */
+
+/* ---------------- Global Styles ---------------- */
+body {
+  @apply antialiased bg-background text-foreground; /* soft orange background + dark text */
+  font-family: 'Inter', sans-serif;               /* optional, আপনার ফন্ট */
+  transition: background-color 0.3s, color 0.3s; /* smooth theme transition */
+}
+
+/* Input / button defaults to match theme */
+input, textarea, select {
+  @apply bg-input-background border border-border rounded-md text-foreground;
+}
+
+button {
+  @apply bg-primary text-primary-foreground rounded-lg px-4 py-2 shadow-sm hover:opacity-90 transition;
+}
