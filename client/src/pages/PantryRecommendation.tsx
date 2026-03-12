@@ -3,10 +3,7 @@ import { Sparkles, CheckCircle2, Utensils, Loader2, AlertCircle } from "lucide-r
 import axios from "axios";
 
 interface Ingredient {
-  ingredientId: {
-    _id: string;
-    name: string;
-  };
+  ingredientId: { _id: string; name: string; };
   quantity: string;
 }
 
@@ -26,14 +23,8 @@ export default function PantryRecommendation() {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        
         const userId = localStorage.getItem("userId");
-
-        const response = await axios.get(
-          `http://localhost:5000/api/recommend/${userId}`
-        );
-
-        console.log("Recommendation API Response:", response.data);
+        const response = await axios.get(`http://localhost:5000/api/recommend/${userId}`);
         setRecommendations(response.data || []);
       } catch (err) {
         console.error("Failed to load recommendations:", err);
@@ -41,108 +32,90 @@ export default function PantryRecommendation() {
         setLoading(false);
       }
     };
-
     fetchRecommendations();
   }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex flex-col justify-center items-center gap-4">
+      <div className="flex flex-col justify-center items-center py-20 gap-4">
         <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-        <p className="text-orange-500 font-black animate-pulse uppercase tracking-widest">
-          Scanning your pantry...
-        </p>
+        <p className="text-orange-500 font-black animate-pulse uppercase tracking-widest">Scanning your pantry...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-5xl mx-auto space-y-10">
-        
-        {/* Header Section */}
-        <div className="bg-gradient-to-br from-orange-600 to-orange-400 p-12 rounded-[3.5rem] shadow-2xl shadow-orange-500/20 relative overflow-hidden">
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-4">
-              <Sparkles className="w-12 h-12 text-white animate-bounce" />
-              <h1 className="text-5xl font-extrabold tracking-tighter italic">Pantry Magic</h1>
-            </div>
-            <p className="text-white/90 text-xl font-medium max-w-md">
-              We found {recommendations.length} recipes you can cook right now!
-            </p>
+    <div className="space-y-10 animate-in fade-in duration-500">
+      
+      {/* Header Section  */}
+      <div className="bg-gradient-to-br from-orange-600 to-orange-400 p-12 rounded-[3.5rem] shadow-2xl shadow-orange-500/20 relative overflow-hidden text-left">
+        <div className="relative z-10">
+          <div className="flex items-center gap-4 mb-4">
+            <Sparkles className="w-12 h-12 text-white animate-bounce" />
+            <h1 className="text-5xl font-extrabold tracking-tighter italic text-white">Pantry Magic</h1>
           </div>
-          <div className="absolute top-[-20%] right-[-10%] w-80 h-80 bg-white/10 rounded-full blur-3xl" />
+          <p className="text-white/90 text-xl font-medium max-w-md">
+            We found {recommendations.length} recipes you can cook right now!
+          </p>
         </div>
+        <div className="absolute top-[-20%] right-[-10%] w-80 h-80 bg-white/10 rounded-full blur-3xl" />
+      </div>
 
-        {/* Recipe Grid */}
-        <div className="grid gap-10">
-          {recommendations.length > 0 ? (
-            recommendations.map((recipe) => (
-              <div
-                key={recipe._id}
-                className="group bg-white/5 border border-white/10 p-8 rounded-[3.5rem] flex flex-col md:flex-row gap-10 items-center hover:bg-white/[0.07] transition-all duration-500 hover:border-orange-500/40 shadow-lg"
-              >
-                {/* Recipe Image */}
-                <div className="relative shrink-0">
-                  <img
-                    src={recipe.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
-                    className="w-64 h-64 rounded-[3rem] object-cover border-8 border-white/5 group-hover:rotate-2 transition-all duration-500 shadow-2xl"
-                    alt={recipe.title}
-                  />
-                  {recipe.isReady && (
-                    <div className="absolute -top-4 -right-4 bg-green-500 p-3 rounded-full shadow-xl border-4 border-black animate-pulse">
-                      <CheckCircle2 className="w-8 h-8 text-white" />
-                    </div>
-                  )}
+      {}
+      <div className="grid gap-10">
+        {recommendations.length > 0 ? (
+          recommendations.map((recipe) => (
+            <div key={recipe._id} className="group bg-white/5 border border-white/10 p-8 rounded-[3.5rem] flex flex-col md:flex-row gap-10 items-center hover:bg-white/[0.07] transition-all duration-500 hover:border-orange-500/40 shadow-lg text-left w-full">
+              
+              <div className="relative shrink-0">
+                <img
+                  src={recipe.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
+                  className="w-64 h-64 rounded-[3rem] object-cover border-8 border-white/5 group-hover:rotate-2 transition-all duration-500 shadow-2xl"
+                  alt={recipe.title}
+                />
+                {recipe.isReady && (
+                  <div className="absolute -top-4 -right-4 bg-green-500 p-3 rounded-full shadow-xl border-4 border-black animate-pulse">
+                    <CheckCircle2 className="w-8 h-8 text-white" />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-grow space-y-6 w-full">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <h2 className="text-4xl font-black text-white tracking-tight">{recipe.title}</h2>
+                  <div className={`px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest border-2 ${recipe.isReady ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-orange-500/10 text-orange-400 border-orange-500/20"}`}>
+                    {recipe.matchPercentage}% Match
+                  </div>
                 </div>
 
-                {/* Recipe Details */}
-                <div className="flex-grow space-y-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <h2 className="text-4xl font-black text-white tracking-tight">
-                      {recipe.title}
-                    </h2>
-                    <div className={`px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest border-2 ${
-                      recipe.isReady ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-orange-500/10 text-orange-400 border-orange-500/20"
-                    }`}>
-                      {recipe.matchPercentage}% Match
-                    </div>
+                <div className="space-y-4">
+                  <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Required Ingredients</p>
+                  <div className="flex flex-wrap gap-3">
+                    {recipe.ingredients.map((ing, idx) => (
+                      <span key={idx} className="flex items-center gap-2 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl text-sm text-gray-200 font-bold">
+                        <CheckCircle2 className={`w-4 h-4 ${recipe.isReady ? "text-green-500" : "text-gray-500"}`} />
+                        {ing.ingredientId?.name || "Secret Ingredient"}
+                      </span>
+                    ))}
                   </div>
-
-                  <div className="space-y-4">
-                    <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Required Ingredients</p>
-                    <div className="flex flex-wrap gap-3">
-                      {recipe.ingredients.map((ing, idx) => (
-                        <span
-                          key={idx}
-                          className="flex items-center gap-2 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl text-sm text-gray-200 font-bold"
-                        >
-                          <CheckCircle2 className={`w-4 h-4 ${recipe.isReady ? "text-green-500" : "text-gray-500"}`} />
-                          {ing.ingredientId?.name || "Secret Ingredient"}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <button className="group/btn flex items-center gap-4 bg-white text-black px-12 py-5 rounded-[2rem] font-black text-lg hover:bg-orange-500 hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-white/5">
-                    <Utensils className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
-                    Let's Cook
-                  </button>
                 </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-32 bg-white/5 border-4 border-dashed border-white/10 rounded-[4rem] space-y-6">
-              <div className="bg-white/5 w-24 h-24 rounded-full flex items-center justify-center mx-auto">
-                <AlertCircle className="w-12 h-12 text-gray-600" />
-              </div>
-              <div className="space-y-2">
-                <p className="text-gray-400 text-2xl font-black">Your pantry is lonely!</p>
-                <p className="text-gray-600 font-medium">Add some ingredients to see the magic happen.</p>
+
+                <button className="group/btn flex items-center gap-4 bg-white text-black px-12 py-5 rounded-[2rem] font-black text-lg hover:bg-orange-500 hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-white/5 border-none cursor-pointer">
+                  <Utensils className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
+                  Let's Cook
+                </button>
               </div>
             </div>
-          )}
-        </div>
+          ))
+        ) : (
+          <div className="text-center py-32 bg-white/5 border-4 border-dashed border-white/10 rounded-[4rem] space-y-6">
+            <AlertCircle className="w-12 h-12 text-gray-600 mx-auto" />
+            <div className="space-y-2">
+              <p className="text-gray-400 text-2xl font-black">Your pantry is lonely!</p>
+              <p className="text-gray-600 font-medium">Add some ingredients to see the magic happen.</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
