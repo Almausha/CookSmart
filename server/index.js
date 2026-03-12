@@ -11,20 +11,30 @@ app.use(cors());
 app.use(express.json());
 
 // Test route
-app.get('/', (req, res) => res.send('CookSmart API Running'));
+app.get('/', (req, res) => {
+  res.send('CookSmart API Running');
+});
 
-// Routes
+// Routes import
 const authRoutes = require('./routes/authRoutes');
 const recipeRoutes = require('./routes/recipeRoutes');
+const recipeRecommendRoutes = require('./routes/recipeRecommendRoutes');
 
+// Routes use
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
-app.use('/api/recommend', recipeRoutes); // ✅ এখন ঠিকভাবে router object
+app.use('/api/recommend', recipeRecommendRoutes); // ✅ recommendation router
 
-// MongoDB
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✔️ Connected to MongoDB Atlas'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+  .then(() => {
+    console.log('✔️ Connected to MongoDB Atlas');
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+  });
 
 // Start server
-app.listen(PORT, () => console.log(`⚡ Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`⚡ Server running on port ${PORT}`);
+});

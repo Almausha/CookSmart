@@ -4,25 +4,19 @@ const { Schema } = mongoose;
 /* ================= USER ================= */
 const UserSchema = new Schema({
   name: { type: String, required: true },
-
   email: { type: String, required: true, unique: true },
-
   password: { type: String, required: true },
-
   dietProfile: {
     type: String,
     enum: ["diabetic", "vegan", "weight-loss", "halal", "none"],
     default: "none"
   },
-
   role: {
     type: String,
     enum: ["user", "admin"],
     default: "user"
-  }
-
+  },
 }, { timestamps: true });
-
 
 
 /* ================= ADMIN ================= */

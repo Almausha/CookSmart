@@ -1,15 +1,22 @@
-import { useState, useEffect } from 'react';
-import { Sparkles, CheckCircle2, Utensils, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { Sparkles, CheckCircle2, Utensils, Loader2, AlertCircle } from "lucide-react";
+import axios from "axios";
+
+interface Ingredient {
+  ingredientId: {
+    _id: string;
+    name: string;
+  };
+  quantity: string;
+}
 
 interface RecommendedRecipe {
   _id: string;
   title: string;
   imageUrl?: string;
-  ingredients: Array<{
-    ingredientId: { name: string };
-    quantity: string;
-  }>;
+  matchPercentage: number;
+  isReady: boolean;
+  ingredients: Ingredient[];
 }
 
 export default function PantryRecommendation() {
@@ -19,91 +26,120 @@ export default function PantryRecommendation() {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const userId = "000000000000000000000002"; 
-        // ✅ সঠিক URL
-        const response = await axios.get(`http://localhost:5000/api/recommend/${userId}`);
-        console.log("API response:", response.data); // debug
-        setRecommendations(response.data);
+        
+        const userId = localStorage.getItem("userId");
+
+        const response = await axios.get(
+          `http://localhost:5000/api/recommend/${userId}`
+        );
+
+        console.log("Recommendation API Response:", response.data);
+        setRecommendations(response.data || []);
       } catch (err) {
         console.error("Failed to load recommendations:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchRecommendations();
   }, []);
 
-  if (loading) return (
-    <div className="min-h-screen bg-black flex flex-col justify-center items-center gap-4">
-      <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-      <p className="text-orange-500 font-black animate-pulse">Checking your pantry...</p>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col justify-center items-center gap-4">
+        <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
+        <p className="text-orange-500 font-black animate-pulse uppercase tracking-widest">
+          Scanning your pantry...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-5xl mx-auto space-y-8">
+      <div className="max-w-5xl mx-auto space-y-10">
         
-        {/* Header */}
-        <div className="bg-gradient-to-r from-orange-600 to-orange-400 p-10 rounded-[3rem] shadow-2xl shadow-orange-500/20 relative overflow-hidden">
+        {/* Header Section */}
+        <div className="bg-gradient-to-br from-orange-600 to-orange-400 p-12 rounded-[3.5rem] shadow-2xl shadow-orange-500/20 relative overflow-hidden">
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-4">
-              <Sparkles className="w-10 h-10 text-white animate-pulse" />
-              <h1 className="text-4xl font-black">Pantry Magic</h1>
+              <Sparkles className="w-12 h-12 text-white animate-bounce" />
+              <h1 className="text-5xl font-extrabold tracking-tighter italic">Pantry Magic</h1>
             </div>
-            <p className="text-white/90 text-lg font-medium">We found recipes matching your current stock!</p>
+            <p className="text-white/90 text-xl font-medium max-w-md">
+              We found {recommendations.length} recipes you can cook right now!
+            </p>
           </div>
-          <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute top-[-20%] right-[-10%] w-80 h-80 bg-white/10 rounded-full blur-3xl" />
         </div>
 
-        {/* Recommendation List */}
-        <div className="grid gap-8">
-          {recommendations.length > 0 ? recommendations.map((recipe) => (
-            <div key={recipe._id} className="group bg-white/5 border border-white/10 p-8 rounded-[3rem] flex flex-col md:flex-row gap-8 items-center hover:bg-white/[0.08] transition-all duration-500 hover:border-orange-500/30">
-              
-              {/* Recipe Image */}
-              <div className="relative shrink-0">
-                <img 
-                  src={recipe.imageUrl || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZSc47cO2qqqkNwurkdFjJXANYBMq-g2z2fXkCwWbyZ5EWOXZkk66ByoIL1EkKLarQ1iFMGYN4xxIOYaaQ8GYfWL1fCH01ltX_UoDYfCys&s=10"} 
-                  className="w-56 h-56 rounded-[2.5rem] object-cover border-4 border-white/5 group-hover:scale-105 transition-transform duration-500 shadow-xl" 
-                  alt={recipe.title} 
-                />
-                <div className="absolute -bottom-2 -right-2 bg-green-500 p-2 rounded-full shadow-lg">
-                  <CheckCircle2 className="w-6 h-6 text-white" />
+        {/* Recipe Grid */}
+        <div className="grid gap-10">
+          {recommendations.length > 0 ? (
+            recommendations.map((recipe) => (
+              <div
+                key={recipe._id}
+                className="group bg-white/5 border border-white/10 p-8 rounded-[3.5rem] flex flex-col md:flex-row gap-10 items-center hover:bg-white/[0.07] transition-all duration-500 hover:border-orange-500/40 shadow-lg"
+              >
+                {/* Recipe Image */}
+                <div className="relative shrink-0">
+                  <img
+                    src={recipe.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
+                    className="w-64 h-64 rounded-[3rem] object-cover border-8 border-white/5 group-hover:rotate-2 transition-all duration-500 shadow-2xl"
+                    alt={recipe.title}
+                  />
+                  {recipe.isReady && (
+                    <div className="absolute -top-4 -right-4 bg-green-500 p-3 rounded-full shadow-xl border-4 border-black animate-pulse">
+                      <CheckCircle2 className="w-8 h-8 text-white" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Recipe Details */}
+                <div className="flex-grow space-y-6">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <h2 className="text-4xl font-black text-white tracking-tight">
+                      {recipe.title}
+                    </h2>
+                    <div className={`px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest border-2 ${
+                      recipe.isReady ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-orange-500/10 text-orange-400 border-orange-500/20"
+                    }`}>
+                      {recipe.matchPercentage}% Match
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Required Ingredients</p>
+                    <div className="flex flex-wrap gap-3">
+                      {recipe.ingredients.map((ing, idx) => (
+                        <span
+                          key={idx}
+                          className="flex items-center gap-2 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl text-sm text-gray-200 font-bold"
+                        >
+                          <CheckCircle2 className={`w-4 h-4 ${recipe.isReady ? "text-green-500" : "text-gray-500"}`} />
+                          {ing.ingredientId?.name || "Secret Ingredient"}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button className="group/btn flex items-center gap-4 bg-white text-black px-12 py-5 rounded-[2rem] font-black text-lg hover:bg-orange-500 hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-white/5">
+                    <Utensils className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
+                    Let's Cook
+                  </button>
                 </div>
               </div>
-
-              <div className="flex-grow space-y-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <h2 className="text-3xl font-black text-white group-hover:text-orange-500 transition-colors">
-                    {recipe.title}
-                  </h2>
-                  <div className="px-5 py-1.5 bg-green-500/10 text-green-400 rounded-full text-xs font-black uppercase tracking-widest border border-green-500/20">
-                    Ready to Cook
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <p className="text-xs font-black text-white/40 uppercase tracking-widest">Ingredients You Have:</p>
-                  <div className="flex flex-wrap gap-3">
-                    {recipe.ingredients.map((ing, idx) => (
-                      <span key={idx} className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl text-sm text-gray-300 font-bold">
-                        <CheckCircle2 className="w-4 h-4 text-green-500" /> {ing.ingredientId.name}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <button className="flex items-center gap-3 bg-white text-black px-10 py-4 rounded-2xl font-black hover:bg-orange-500 hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-lg hover:shadow-orange-500/40">
-                  <Utensils className="w-5 h-5" />
-                  Start Cooking
-                </button>
+            ))
+          ) : (
+            <div className="text-center py-32 bg-white/5 border-4 border-dashed border-white/10 rounded-[4rem] space-y-6">
+              <div className="bg-white/5 w-24 h-24 rounded-full flex items-center justify-center mx-auto">
+                <AlertCircle className="w-12 h-12 text-gray-600" />
               </div>
-            </div>
-          )) : (
-            <div className="text-center py-24 bg-white/5 border-2 border-dashed border-white/10 rounded-[3rem]">
-              <p className="text-gray-500 text-xl font-bold">No recipes match your ingredients yet.</p>
-              <p className="text-gray-600">Try adding "Chicken Breast" to your pantry!</p>
+              <div className="space-y-2">
+                <p className="text-gray-400 text-2xl font-black">Your pantry is lonely!</p>
+                <p className="text-gray-600 font-medium">Add some ingredients to see the magic happen.</p>
+              </div>
             </div>
           )}
         </div>

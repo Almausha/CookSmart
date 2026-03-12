@@ -5,9 +5,9 @@ export default function UserDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const username = "Alma Usha"; 
+  const username = localStorage.getItem("userName") || "User"; 
 
-  // চেক করবে আমরা কি মেইন ড্যাশবোর্ডে আছি নাকি কোনো ফিচারের ভেতরে
+  
   const isHome = location.pathname === '/user-dashboard';
 
   const handleLogout = () => {
@@ -74,7 +74,7 @@ export default function UserDashboard() {
             </div>
           </div>
         ) : (
-          /* --- ফিচার ভিউ: যখন কোনো ফিচারে ক্লিক করা হয় --- */
+        
           <div className="w-full transition-all duration-500 animate-in fade-in zoom-in-95">
              {/* Back to Dashboard Button */}
              <button 
