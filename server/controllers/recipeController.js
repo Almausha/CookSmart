@@ -10,7 +10,6 @@ exports.create = async (req, res) => {
   }
 };
 
-// ২. পাবলিক রেসিপি লিস্ট (যেটা /public রুটে কল হবে)
 exports.getPublic = async (req, res) => {
   try {
     const data = await Recipe.fetchPublicRecipes();
@@ -20,7 +19,6 @@ exports.getPublic = async (req, res) => {
   }
 };
 
-// ৩. আইডি দিয়ে রেসিপি ডিটেইলস
 exports.getById = async (req, res) => {
   try {
     const data = await Recipe.fetchRecipeById(req.params.id);

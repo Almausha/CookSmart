@@ -5,7 +5,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PublicRecipes from "./pages/PublicRecipes";
 import PantryRecommendation from "./pages/PantryRecommendation";
 import RecipeDetails from "./pages/RecipeDetails";
-import AddRecipe from "./pages/AddRecipe"; // নতুন ইমপোর্ট
+import AddRecipe from "./pages/AddRecipe"; // Admin Add Recipe
+import UserAddRecipe from "./pages/UserAddRecipe"; // User specific with Pantry
 
 /** * ডামি কম্পোনেন্টসমূহ */
 const UserManagement = () => (
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
         element: <PantryRecommendation />
       },
       {
+        path: "create-recipe", // ইউজার রেসিপি তৈরি করার পথ
+        element: <UserAddRecipe />
+      },
+      {
         path: "public-recipes", 
         element: <PublicRecipes />
       },
@@ -70,9 +75,8 @@ export const router = createBrowserRouter([
           </div>
         )
       },
-     
       { 
-        path: "add-recipe", 
+        path: "add-recipe", // অ্যাডমিনের জন্য আলাদা পেজ (যদি থাকে)
         element: <AddRecipe /> 
       },
       { 

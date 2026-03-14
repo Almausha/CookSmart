@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { ChefHat, Plus, Youtube, Save, Loader2, ListChecks, ShoppingBasket, Image as ImageIcon, X } from "lucide-react";
+import { ChefHat, Plus, Youtube, Save, Loader2, ListChecks, ShoppingBasket, Image as ImageIcon, X, CheckCircle2 } from "lucide-react";
 import api from "../services/api";
 
 export default function AddRecipe() {
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false); // সাকসেস মেসেজের জন্য স্টেট
   const [ingredientsList, setIngredientsList] = useState<any[]>([]);
   
   const [recipeData, setRecipeData] = useState({
@@ -17,7 +18,6 @@ export default function AddRecipe() {
     isPublic: true,
   });
 
-  // ইনগ্রেডিয়েন্ট লিস্ট ফেচ করার ফাংশন (যাতে বারবার কল করা যায়)
   const fetchIngredients = async () => {
     try {
       const res = await api.get("/ingredients");
@@ -31,20 +31,18 @@ export default function AddRecipe() {
     fetchIngredients();
   }, []);
 
-  // নতুন ইনগ্রেডিয়েন্ট সরাসরি ডাটাবেসে অ্যাড করার লজিক
   const handleQuickAddIngredient = async () => {
     const name = prompt("Enter new ingredient name (e.g. Himalayan Salt):");
     if (!name || name.trim() === "") return;
 
     try {
       setLoading(true);
-      // তোমার ব্যাকএন্ডের ইনগ্রেডিয়েন্ট তৈরির রুট অনুযায়ী
       await api.post("/ingredients", { name: name.trim() });
       alert(`'${name}' has been added to the master list! 🚀`);
-      await fetchIngredients(); // ড্রপডাউন রিফ্রেশ করা
+      await fetchIngredients();
     } catch (err) {
       console.error(err);
-      alert("Failed to add new ingredient. Check if it already exists.");
+      alert("Failed to add new ingredient.");
     } finally {
       setLoading(false);
     }
@@ -68,9 +66,15 @@ export default function AddRecipe() {
         imageUrl: recipeData.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
       };
       await api.post("/recipes", finalData);
-      alert("Recipe Created Successfully! 🚀");
-      // ফরম রিসেট করার জন্য (ঐচ্ছিক)
-      window.location.reload(); 
+      
+      // সাকসেস মেসেজ ট্রিগার করা
+      setShowSuccess(true);
+      
+      // ২ সেকেন্ড পর পেজ রিলোড হবে যাতে ইউজার মেসেজটা দেখতে পায়
+      setTimeout(() => {
+        window.location.reload(); 
+      }, 2000);
+
     } catch (err) {
       console.error(err);
       alert("Failed to create recipe.");
@@ -80,8 +84,19 @@ export default function AddRecipe() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-10 bg-white/5 backdrop-blur-3xl rounded-[3.5rem] border border-white/20 shadow-2xl animate-in fade-in duration-700">
+    <div className="relative max-w-4xl mx-auto p-10 bg-white/5 backdrop-blur-3xl rounded-[3.5rem] border border-white/20 shadow-2xl animate-in fade-in duration-700">
       
+      {/* SUCCESS OVERLAY - সাকসেসফুলি অ্যাড হলে এটি দেখাবে */}
+      {showSuccess && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md rounded-[3.5rem] animate-in zoom-in duration-300">
+          <div className="bg-orange-500 p-4 rounded-full mb-4 shadow-lg shadow-orange-500/50">
+            <CheckCircle2 size={50} className="text-white animate-bounce" />
+          </div>
+          <h2 className="text-3xl font-black text-white uppercase italic">Recipe Deployed!</h2>
+          <p className="text-orange-400 font-bold mt-2">Successfully added to system 🚀</p>
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="flex flex-col items-center text-center mb-12">
         <div className="w-20 h-20 bg-gradient-to-tr from-orange-500 to-orange-400 rounded-3xl flex items-center justify-center shadow-2xl shadow-orange-500/20 mb-6 text-white">
@@ -218,7 +233,6 @@ export default function AddRecipe() {
               <ShoppingBasket className="w-3 h-3" /> Ingredient Mapping
             </label>
             <div className="flex gap-4">
-                {/* নতুন ইনগ্রেডিয়েন্ট কুইক অ্যাড বাটন */}
                 <button type="button" onClick={handleQuickAddIngredient} className="text-[10px] font-black text-green-400 hover:text-green-300 transition-colors uppercase tracking-tighter flex items-center gap-1 bg-transparent p-0 shadow-none border-none cursor-pointer">
                   <Plus size={12} /> New Master Item
                 </button>

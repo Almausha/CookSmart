@@ -17,14 +17,13 @@ const fetchRecommendations = async (userId) => {
   }).populate("ingredients.ingredientId");
 };
 
-// ৩. আইডি দিয়ে একটি নির্দিষ্ট রেসিপি খোঁজা (তোমার নতুন কোড)
+
 const fetchRecipeById = async (id) => {
   return await schemas.Recipe.findById(id)
     .populate("ingredients.ingredientId")
     .populate("ownerId", "name");
 };
 
-// 🆕 ৪. নতুন রেসিপি তৈরি করা (অ্যাডমিন ফর্মের ডাটা সেভ করার জন্য)
 const createNewRecipe = async (recipeData) => {
   const newRecipe = new schemas.Recipe({
     ...recipeData,

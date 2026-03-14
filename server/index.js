@@ -21,7 +21,8 @@ const recipeRoutes = require('./routes/recipeRoutes');
 const recipeRecommendRoutes = require('./routes/recipeRecommendRoutes');
 const missingRoutes = require('./routes/missingRoutes'); 
 const youtubeRoutes = require('./routes/youtubeRoutes');
-const ingredientRoutes = require('./routes/ingredientRoutes'); // ✅ Added this
+const ingredientRoutes = require('./routes/ingredientRoutes'); 
+const userRecipeRoutes = require('./routes/userRecipeRoutes'); 
 
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
@@ -29,7 +30,10 @@ app.use('/api/recipes', recipeRoutes);
 app.use('/api/recommend', recipeRecommendRoutes);
 app.use('/api/check-missing', missingRoutes); 
 app.use('/api/video', youtubeRoutes);        
-app.use('/api/ingredients', ingredientRoutes); // ✅ Added this (Matches your frontend api.get("/ingredients"))
+app.use('/api/ingredients', ingredientRoutes); 
+
+
+app.use('/api/user-recipe', userRecipeRoutes); 
 
 // 5. MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
