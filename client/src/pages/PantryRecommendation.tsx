@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ১. নেভিগেশন ইমপোর্ট
 import { Sparkles, CheckCircle2, Utensils, Loader2, AlertCircle } from "lucide-react";
-import axios from "axios";
+import api from "../services/api"; // axios এর বদলে তোমার কাস্টম api ব্যবহার করা ভালো
 
 interface Ingredient {
   ingredientId: { _id: string; name: string; };
@@ -19,12 +20,14 @@ interface RecommendedRecipe {
 export default function PantryRecommendation() {
   const [recommendations, setRecommendations] = useState<RecommendedRecipe[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // ২. নেভিগেট হুক
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
         const userId = localStorage.getItem("userId");
-        const response = await axios.get(`http://localhost:5000/api/recommend/${userId}`);
+        // তোমার এপিআই এন্ডপয়েন্ট অনুযায়ী চেক করে নিও
+        const response = await api.get(`/recommend/${userId}`);
         setRecommendations(response.data || []);
       } catch (err) {
         console.error("Failed to load recommendations:", err);
@@ -39,7 +42,7 @@ export default function PantryRecommendation() {
     return (
       <div className="flex flex-col justify-center items-center py-20 gap-4">
         <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-        <p className="text-orange-500 font-black animate-pulse uppercase tracking-widest">Scanning your pantry...</p>
+        <p className="text-orange-500 font-black animate-pulse uppercase tracking-widest text-xs">Scanning your pantry...</p>
       </div>
     );
   }
@@ -47,7 +50,7 @@ export default function PantryRecommendation() {
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
       
-      {/* Header Section  */}
+      {/* Header Section */}
       <div className="bg-gradient-to-br from-orange-600 to-orange-400 p-12 rounded-[3.5rem] shadow-2xl shadow-orange-500/20 relative overflow-hidden text-left">
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-4">
@@ -61,7 +64,7 @@ export default function PantryRecommendation() {
         <div className="absolute top-[-20%] right-[-10%] w-80 h-80 bg-white/10 rounded-full blur-3xl" />
       </div>
 
-      {}
+      {/* Recommendations Grid */}
       <div className="grid gap-10">
         {recommendations.length > 0 ? (
           recommendations.map((recipe) => (
@@ -83,13 +86,13 @@ export default function PantryRecommendation() {
               <div className="flex-grow space-y-6 w-full">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <h2 className="text-4xl font-black text-white tracking-tight">{recipe.title}</h2>
-                  <div className={`px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest border-2 ${recipe.isReady ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-orange-500/10 text-orange-400 border-orange-500/20"}`}>
+                  <div className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-2 ${recipe.isReady ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-orange-500/10 text-orange-400 border-orange-500/20"}`}>
                     {recipe.matchPercentage}% Match
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <p className="text-xs font-black text-white/30 uppercase tracking-[0.2em]">Required Ingredients</p>
+                  <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Required Ingredients</p>
                   <div className="flex flex-wrap gap-3">
                     {recipe.ingredients.map((ing, idx) => (
                       <span key={idx} className="flex items-center gap-2 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl text-sm text-gray-200 font-bold">
@@ -100,7 +103,11 @@ export default function PantryRecommendation() {
                   </div>
                 </div>
 
-                <button className="group/btn flex items-center gap-4 bg-white text-black px-12 py-5 rounded-[2rem] font-black text-lg hover:bg-orange-500 hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-white/5 border-none cursor-pointer">
+                {/* Let's Cook Button - ক্লিক করলে আইডি সহ ডিটেইল পেজে যাবে */}
+                <button 
+                  onClick={() => navigate(`/user-dashboard/recipe/${recipe._id}`)}
+                  className="group/btn flex items-center gap-4 bg-white text-black px-12 py-5 rounded-[2rem] font-black text-lg hover:bg-orange-500 hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-white/5 border-none cursor-pointer"
+                >
                   <Utensils className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
                   Let's Cook
                 </button>
@@ -111,8 +118,8 @@ export default function PantryRecommendation() {
           <div className="text-center py-32 bg-white/5 border-4 border-dashed border-white/10 rounded-[4rem] space-y-6">
             <AlertCircle className="w-12 h-12 text-gray-600 mx-auto" />
             <div className="space-y-2">
-              <p className="text-gray-400 text-2xl font-black">Your pantry is lonely!</p>
-              <p className="text-gray-600 font-medium">Add some ingredients to see the magic happen.</p>
+              <p className="text-gray-400 text-2xl font-black text-center">Your pantry is lonely!</p>
+              <p className="text-gray-600 font-medium text-center">Add some ingredients to see the magic happen.</p>
             </div>
           </div>
         )}
