@@ -15,7 +15,12 @@ export default function UserAddRecipe() {
     videourl: "",
     imageUrl: "", 
     steps: [""],
-    ingredients: [] as { ingredientId: string, name: string, quantity: string }[],
+    ingredients: [] as { 
+      ingredientId: string; 
+      name: string; 
+      quantity: string; 
+      substituteSuggestions: string[] 
+    }[],
     isPublic: true,
     nutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 }
   });
@@ -32,7 +37,6 @@ export default function UserAddRecipe() {
         }
 
         const res = await api.get(`/user-recipe/user-ingredients/${userId}`);
-        // ব্যাকএন্ড যদি সরাসরি অ্যারে পাঠায় তবে res.data, আর যদি অবজেক্ট পাঠায় তবে res.data.data
         const data = Array.isArray(res.data) ? res.data : res.data.data;
         setPantryItems(data || []);
       } catch (err) {
@@ -50,7 +54,12 @@ export default function UserAddRecipe() {
     if (!exists) {
       setRecipeData(prev => ({
         ...prev,
-        ingredients: [...prev.ingredients, { ingredientId: item._id, name: item.name, quantity: "" }]
+        ingredients: [...prev.ingredients, { 
+          ingredientId: item._id, 
+          name: item.name, 
+          quantity: "",
+          substituteSuggestions: [] 
+        }]
       }));
     }
   };
@@ -177,7 +186,7 @@ export default function UserAddRecipe() {
                <div className="space-y-2">
                  <label className="text-[10px] uppercase font-black text-orange-500 ml-2 tracking-widest">Difficulty</label>
                  <select 
-                   className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none appearance-none cursor-pointer focus:border-orange-500"
+                   className="w-full bg-slate-800 border border-white/10 p-4 rounded-2xl outline-none appearance-none cursor-pointer focus:border-orange-500"
                    onChange={(e)=>setRecipeData({...recipeData, difficulty: e.target.value})}
                  >
                     <option value="easy">Easy</option>
@@ -201,27 +210,43 @@ export default function UserAddRecipe() {
           <div className="flex items-center gap-2 border-l-4 border-orange-500 pl-4">
             <h3 className="text-xl font-black italic uppercase tracking-tighter text-white">Selected Ingredients</h3>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 gap-6">
             {recipeData.ingredients.map((ing, idx) => (
-              <div key={ing.ingredientId} className="flex items-center gap-3 bg-white/5 p-4 rounded-3xl border border-white/5 hover:border-orange-500/40 transition-all group">
-                <span className="flex-grow text-xs font-black uppercase tracking-tight">{ing.name}</span>
-                <input 
-                  placeholder="Qty" 
-                  className="w-20 bg-black/40 border border-white/10 p-2 rounded-xl text-center text-xs outline-none focus:border-orange-500"
-                  value={ing.quantity}
-                  onChange={(e) => {
-                    const newIngs = [...recipeData.ingredients];
-                    newIngs[idx].quantity = e.target.value;
-                    setRecipeData({...recipeData, ingredients: newIngs});
-                  }}
-                />
-                <button 
-                  type="button" 
-                  onClick={() => removeIngredient(ing.ingredientId)} 
-                  className="bg-red-500/10 p-2 rounded-lg text-red-500 hover:bg-red-500 hover:text-white transition-all"
-                >
-                  <X size={14} />
-                </button>
+              <div key={ing.ingredientId} className="flex flex-col gap-3 bg-white/5 p-5 rounded-[2rem] border border-white/5 hover:border-orange-500/40 transition-all">
+                <div className="flex items-center gap-3">
+                  <span className="flex-grow text-xs font-black uppercase tracking-tight text-orange-400">{ing.name}</span>
+                  <input 
+                    placeholder="Qty" 
+                    className="w-20 bg-black/40 border border-white/10 p-2 rounded-xl text-center text-xs outline-none focus:border-orange-500"
+                    value={ing.quantity}
+                    onChange={(e) => {
+                      const newIngs = [...recipeData.ingredients];
+                      newIngs[idx].quantity = e.target.value;
+                      setRecipeData({...recipeData, ingredients: newIngs});
+                    }}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => removeIngredient(ing.ingredientId)} 
+                    className="bg-red-500/10 p-2 rounded-lg text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+                
+                {/* Substitute Input Field */}
+                <div className="space-y-1">
+                  <label className="text-[9px] uppercase font-bold text-slate-500 ml-1">Substitutes (comma separated)</label>
+                  <input 
+                    placeholder="e.g. Butter, Oil" 
+                    className="w-full bg-black/20 border border-white/5 p-3 rounded-xl text-[10px] outline-none focus:border-orange-500/50 italic"
+                    onChange={(e) => {
+                      const newIngs = [...recipeData.ingredients];
+                      newIngs[idx].substituteSuggestions = e.target.value.split(",").map(s => s.trim()).filter(s => s !== "");
+                      setRecipeData({...recipeData, ingredients: newIngs});
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>

@@ -28,9 +28,11 @@ const fetchUserPantryIngredients = async (userId) => {
 };
 
 const saveUserRecipe = async (recipeData) => {
+ 
   const formattedIngredients = recipeData.ingredients.map(ing => ({
     ingredientId: ing.ingredientId,
-    quantity: ing.quantity
+    quantity: ing.quantity,
+    substituteSuggestions: ing.substituteSuggestions || [] 
   }));
 
   const newRecipe = new schemas.Recipe({
@@ -54,5 +56,4 @@ const saveUserRecipe = async (recipeData) => {
   return await newRecipe.save();
 };
 
-// এখানে আপনার ব্র্যাকেটে ভুল ছিল, এটা ফিক্সড:
 module.exports = { fetchUserPantryIngredients, saveUserRecipe };

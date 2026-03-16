@@ -25,8 +25,6 @@ export default function RecipeDetails() {
 
         if (recipeRes.status === "fulfilled") setRecipe(recipeRes.value.data);
         if (videoRes.status === "fulfilled") setVideoData(videoRes.value.data);
-        
-        // Debugging: কনসোলে ডাটা চেক করার জন্য
         if (missingRes.status === "fulfilled") {
           console.log("Missing API Data:", missingRes.value.data);
           setMissingData(missingRes.value.data);
@@ -93,7 +91,6 @@ export default function RecipeDetails() {
               <Flame className="w-5 h-5 text-orange-500" />
               <span className="text-white font-bold">{recipe.nutrition?.calories} kcal</span>
             </div>
-            {/* missingData.isReady check */}
             {missingData?.isReady && (
               <div className="bg-green-500/20 px-6 py-3 rounded-2xl border border-green-500/30 flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-500" />
@@ -115,37 +112,52 @@ export default function RecipeDetails() {
           </div>
         </div>
 
-        {/* Sidebar: Ingredients */}
+        {/* Sidebar: Ingredients with Substitute Logic */}
         <div className="space-y-6">
           <div className="bg-gradient-to-br from-white/10 to-transparent p-8 rounded-[3rem] border border-white/10 shadow-xl backdrop-blur-md">
             <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2">
               <ShoppingCart className="text-orange-500" /> Ingredients
             </h3>
-            <div className="space-y-4 text-left">
+            <div className="space-y-6 text-left">
               {recipe.ingredients?.map((ing: any, idx: number) => {
-                // ১. বর্তমান ইনগ্রেডিয়েন্ট আইডি বের করা
                 const recipeIngId = (ing.ingredientId?._id || ing.ingredientId || "").toString();
                 
-                // ২. চেক করা এটা মিসিং লিস্টে আছে কিনা
                 const isMissing = missingData?.missing?.some((m: any) => {
                   const mId = (m.ingredientId?._id || m.ingredientId || m._id || m).toString();
                   return mId === recipeIngId;
                 });
 
                 return (
-                  <div key={idx} className="flex items-center justify-between group">
-                    <div className="flex flex-col">
-                      <span className={`font-bold ${!isMissing ? "text-white" : "text-gray-400 line-through decoration-red-500/50"}`}>
-                        {ing.ingredientId?.name || "Ingredient"}
-                      </span>
-                      <span className="text-xs text-gray-500 font-medium">{ing.quantity}</span>
+                  <div key={idx} className="flex flex-col gap-2 border-b border-white/5 pb-4 last:border-0">
+                    <div className="flex items-center justify-between group">
+                      <div className="flex flex-col">
+                        <span className={`font-bold transition-all ${!isMissing ? "text-white" : "text-gray-500 line-through decoration-red-500/40"}`}>
+                          {ing.ingredientId?.name || "Ingredient"}
+                        </span>
+                        <span className="text-xs text-gray-500 font-medium">{ing.quantity}</span>
+                      </div>
+                      {!isMissing ? (
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <div className="flex items-center gap-1">
+                          <AlertTriangle className="w-4 h-4 text-red-500" />
+                          <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-1 rounded-md font-black uppercase border border-red-500/20">Missing</span>
+                        </div>
+                      )}
                     </div>
-                    {!isMissing ? (
-                      <CheckCircle className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <AlertTriangle className="w-4 h-4 text-red-500" />
-                        <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-1 rounded-md font-black uppercase border border-red-500/20">Missing</span>
+
+                    {/* Substitute Logic Section */}
+                    {isMissing && (
+                      <div className="pl-3 border-l-2 border-orange-500/30 py-1">
+                        {ing.substituteSuggestions && ing.substituteSuggestions.length > 0 ? (
+                          <p className="text-[10px] text-orange-400 font-bold uppercase italic tracking-wider">
+                            Try: {ing.substituteSuggestions.join(", ")}
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-gray-600 italic uppercase font-bold tracking-tighter">
+                            No substitute to show
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -154,7 +166,7 @@ export default function RecipeDetails() {
             </div>
             
             {missingData && !missingData.isReady && (
-              <button className="w-full mt-8 py-4 bg-orange-600 text-white rounded-2xl font-black hover:bg-orange-500 transition-all transform hover:scale-105 shadow-lg shadow-orange-900/20">
+              <button className="w-full mt-8 py-4 bg-orange-600 text-white rounded-2xl font-black hover:bg-orange-500 transition-all transform hover:scale-105 shadow-lg shadow-orange-900/20 uppercase tracking-widest text-xs">
                 Add Missing to Cart
               </button>
             )}
