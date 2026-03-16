@@ -4,7 +4,7 @@ import api from "../services/api";
 
 export default function AddRecipe() {
   const [loading, setLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false); // সাকসেস মেসেজের জন্য স্টেট
+  const [showSuccess, setShowSuccess] = useState(false); 
   const [ingredientsList, setIngredientsList] = useState<any[]>([]);
   
   const [recipeData, setRecipeData] = useState({
@@ -67,10 +67,10 @@ export default function AddRecipe() {
       };
       await api.post("/recipes", finalData);
       
-      // সাকসেস মেসেজ ট্রিগার করা
+      
       setShowSuccess(true);
       
-      // ২ সেকেন্ড পর পেজ রিলোড হবে যাতে ইউজার মেসেজটা দেখতে পায়
+      
       setTimeout(() => {
         window.location.reload(); 
       }, 2000);
@@ -86,7 +86,7 @@ export default function AddRecipe() {
   return (
     <div className="relative max-w-4xl mx-auto p-10 bg-white/5 backdrop-blur-3xl rounded-[3.5rem] border border-white/20 shadow-2xl animate-in fade-in duration-700">
       
-      {/* SUCCESS OVERLAY - সাকসেসফুলি অ্যাড হলে এটি দেখাবে */}
+      {/* SUCCESS OVERLAY  */}
       {showSuccess && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md rounded-[3.5rem] animate-in zoom-in duration-300">
           <div className="bg-orange-500 p-4 rounded-full mb-4 shadow-lg shadow-orange-500/50">

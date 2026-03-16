@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // ১. নেভিগেশন ইমপোর্ট
+import { useNavigate } from "react-router-dom"; 
 import { Sparkles, CheckCircle2, Utensils, Loader2, AlertCircle } from "lucide-react";
-import api from "../services/api"; // axios এর বদলে তোমার কাস্টম api ব্যবহার করা ভালো
+import api from "../services/api"; 
 
 interface Ingredient {
   ingredientId: { _id: string; name: string; };
@@ -20,13 +20,13 @@ interface RecommendedRecipe {
 export default function PantryRecommendation() {
   const [recommendations, setRecommendations] = useState<RecommendedRecipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // ২. নেভিগেট হুক
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
         const userId = localStorage.getItem("userId");
-        // তোমার এপিআই এন্ডপয়েন্ট অনুযায়ী চেক করে নিও
+    
         const response = await api.get(`/recommend/${userId}`);
         setRecommendations(response.data || []);
       } catch (err) {
@@ -103,7 +103,7 @@ export default function PantryRecommendation() {
                   </div>
                 </div>
 
-                {/* Let's Cook Button - ক্লিক করলে আইডি সহ ডিটেইল পেজে যাবে */}
+                {/* Let's Cook Button  */}
                 <button 
                   onClick={() => navigate(`/user-dashboard/recipe/${recipe._id}`)}
                   className="group/btn flex items-center gap-4 bg-white text-black px-12 py-5 rounded-[2rem] font-black text-lg hover:bg-orange-500 hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-xl shadow-white/5 border-none cursor-pointer"

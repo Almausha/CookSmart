@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // ১. নেভিগেশন ইমপোর্ট
+import { useNavigate } from 'react-router-dom'; 
 import { Search, Clock, Flame, ChefHat, Utensils, Loader2 } from 'lucide-react';
 import api from '../services/api'; 
 
@@ -18,7 +18,7 @@ export default function PublicRecipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate(); // ২. নেভিগেট হুক
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -123,7 +123,7 @@ export default function PublicRecipes() {
                 </div>
               </div>
 
-              {/* Action Button - ক্লিক করলে ডিটেইল পেজে যাবে */}
+              {/* Action Button - */}
               <button 
                 onClick={() => navigate(`/user-dashboard/recipe/${recipe._id}`)}
                 className="w-full py-4 bg-white/5 hover:bg-white text-white hover:text-black font-black rounded-2xl border border-white/10 transition-all flex items-center justify-center gap-3 group/btn cursor-pointer"

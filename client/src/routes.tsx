@@ -8,7 +8,6 @@ import RecipeDetails from "./pages/RecipeDetails";
 import AddRecipe from "./pages/AddRecipe"; // Admin Add Recipe
 import UserAddRecipe from "./pages/UserAddRecipe"; // User specific with Pantry
 
-/** * ডামি কম্পোনেন্টসমূহ */
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
     <h2 className="text-2xl font-bold text-blue-400 mb-2">User Management Console</h2>

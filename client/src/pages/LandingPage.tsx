@@ -39,7 +39,7 @@ export default function LandingPage() {
           navigate(userObj.role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
         }
       } else {
-        // রেজিস্ট্রেশন সার্ভিস
+        
         await registerUser(formData.username, formData.email, formData.password);
         alert('Registration successful! Please Sign In.');
         setIsLogin(true);
