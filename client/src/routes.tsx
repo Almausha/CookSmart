@@ -5,8 +5,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import PublicRecipes from "./pages/PublicRecipes";
 import PantryRecommendation from "./pages/PantryRecommendation";
 import RecipeDetails from "./pages/RecipeDetails";
-import AddRecipe from "./pages/AddRecipe"; // Admin Add Recipe
-import UserAddRecipe from "./pages/UserAddRecipe"; // User specific with Pantry
+import AddRecipe from "./pages/AddRecipe"; 
+import UserAddRecipe from "./pages/UserAddRecipe"; 
+import AdminMasterIngredients from "./pages/AdminMasterIngredients"; 
 
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
@@ -23,13 +24,11 @@ const AnalyticsPage = () => (
 );
 
 export const router = createBrowserRouter([
-  // ১. ল্যান্ডিং পেজ
   { 
     path: "/", 
     element: <LandingPage /> 
   },
 
-  // ২. ইউজার ড্যাশবোর্ড
   { 
     path: "/user-dashboard", 
     element: <UserDashboard />,
@@ -42,26 +41,13 @@ export const router = createBrowserRouter([
           </div>
         )
       },
-      {
-        path: "explore", 
-        element: <PantryRecommendation />
-      },
-      {
-        path: "create-recipe", // ইউজার রেসিপি তৈরি করার পথ
-        element: <UserAddRecipe />
-      },
-      {
-        path: "public-recipes", 
-        element: <PublicRecipes />
-      },
-      {
-        path: "recipe/:id", 
-        element: <RecipeDetails />
-      }
+      { path: "explore", element: <PantryRecommendation /> },
+      { path: "create-recipe", element: <UserAddRecipe /> },
+      { path: "public-recipes", element: <PublicRecipes /> },
+      { path: "recipe/:id", element: <RecipeDetails /> }
     ]
   },
 
-  // ৩. অ্যাডমিন ড্যাশবোর্ড
   { 
     path: "/admin-dashboard", 
     element: <AdminDashboard />,
@@ -74,18 +60,13 @@ export const router = createBrowserRouter([
           </div>
         )
       },
-      { 
-        path: "add-recipe", // অ্যাডমিনের জন্য আলাদা পেজ (যদি থাকে)
-        element: <AddRecipe /> 
-      },
-      { 
-        path: "users", 
-        element: <UserManagement /> 
-      },
-      { 
-        path: "analytics", 
-        element: <AnalyticsPage /> 
-      },
+      { path: "add-recipe", element: <AddRecipe /> },
+      
+   
+      { path: "master-ingredients", element: <AdminMasterIngredients /> }, 
+
+      { path: "users", element: <UserManagement /> },
+      { path: "analytics", element: <AnalyticsPage /> },
       { 
         path: "settings", 
         element: (

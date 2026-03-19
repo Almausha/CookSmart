@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -23,15 +24,16 @@ const missingRoutes = require('./routes/missingRoutes');
 const youtubeRoutes = require('./routes/youtubeRoutes');
 const ingredientRoutes = require('./routes/ingredientRoutes'); 
 const userRecipeRoutes = require('./routes/userRecipeRoutes'); 
-
+const masterIngredientRoutes = require('./routes/masterIngredient.routes');
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/recommend', recipeRecommendRoutes);
 app.use('/api/check-missing', missingRoutes); 
 app.use('/api/video', youtubeRoutes);        
-app.use('/api/ingredients', ingredientRoutes); 
 
+app.use('/api/ingredients', ingredientRoutes); 
+app.use('/api/master-ingredients', masterIngredientRoutes); // master-ingredients করে দিন
 
 app.use('/api/user-recipe', userRecipeRoutes); 
 
