@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ---------------- Global Font Setup ---------------- */
+:root {
+  --font-sans: 'Inter', sans-serif;   /* primary font */
+}
+
+/* Apply globally */
+body, input, textarea, select, button {
+  font-family: var(--font-sans);
+  font-weight: 400; /* normal text weight */
+}
+
+h1, h2, h3, h4, label, button {
+  font-weight: 500; /* medium / headings */
+}
+
+/* Optional: fine-tune headings */
+h1 { font-weight: 700; font-family: var(--font-sans); }
+h2 { font-weight: 600; font-family: var(--font-sans); }
+h3 { font-weight: 500; font-family: var(--font-sans); }
+h4 { font-weight: 500; font-family: var(--font-sans); }
+
+/* Smooth font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

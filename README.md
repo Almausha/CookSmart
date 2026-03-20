@@ -40,7 +40,7 @@ https://docs.google.com/document/d/1UxqRjDcKr1cTpZhgIcO5PTLKgRh9VewJIR1eBf2W_18/
 - React.js  
 - HTML5  
 - CSS3 / Tailwind CSS  
-- JavaScript  
+- TypeScript  
 
 ### ⚙ Backend  
 - Node.js  
