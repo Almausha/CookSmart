@@ -12,7 +12,9 @@ export default function AdminMasterIngredients() {
     fat: 0,
     unit: "g", 
     isAllergen: false,
-    qualityType: "fresh"
+    qualityType: "fresh",
+    risks: [] as string[],
+    healthBenefits: [] as string[],
   });
 
   // ফিক্সড পাথ: /master-ingredients
@@ -124,6 +126,7 @@ export default function AdminMasterIngredients() {
             </div>
 
             {/* Allergen Toggle */}
+            {/* Allergen Toggle */}
             <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
               <div className="flex items-center gap-2">
                 <ShieldAlert size={14} className={formData.isAllergen ? "text-red-500" : "text-slate-500"} />
@@ -135,6 +138,25 @@ export default function AdminMasterIngredients() {
                 className="w-5 h-5 accent-blue-500 cursor-pointer"
               />
             </div>
+
+            {/* Risks — only show when allergen is checked */}
+            {formData.isAllergen && (
+              <div className="space-y-2 animate-in fade-in duration-300">
+                <label className="text-[10px] uppercase font-black text-red-500 ml-2 flex items-center gap-1">
+                  <ShieldAlert size={10} /> Risk Description
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. contains lactose, nut allergy..."
+                  className="w-full bg-red-500/5 border border-red-500/20 p-4 rounded-2xl outline-none focus:border-red-500/50 transition-all text-xs text-white"
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    risks: e.target.value.split(',').map(r => r.trim()).filter(r => r !== '')
+                  })}
+                />
+                <p className="text-[9px] text-slate-600 ml-2 italic">Separate multiple risks with commas</p>
+              </div>
+            )}
 
             <button 
               disabled={loading}
@@ -173,6 +195,17 @@ export default function AdminMasterIngredients() {
                 {ing.calories > 0 && (
                   <div className="mt-2 flex items-center gap-2 text-[9px] font-bold text-blue-500 uppercase px-2">
                     <Activity size={10} /> Auto-Cal: {ing.calories} kcal
+                  </div>
+                )}
+
+                {ing.isAllergen && (
+                  <div className="mt-2 flex items-center gap-2 text-[9px] font-bold text-red-500 uppercase px-2">
+                    <ShieldAlert size={10} /> Allergen
+                    {ing.risks?.length > 0 && (
+                      <span className="text-red-400/70 normal-case font-medium">
+                        — {ing.risks.join(', ')}
+                      </span>
+                    )}
                   </div>
                 )}
               </div>
