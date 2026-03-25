@@ -1,11 +1,11 @@
-@import "./fonts.css";        /* আপনার ফন্ট ফ্যামিলি */
-@import "./theme.css";        /* আগে থিম ভ্যারিয়েবল (light-orange) */
-@import "./tailwind.css";     /* তারপর Tailwind যাতে ভ্যারিয়েবলগুলো ব্যবহার হয় */
+@import "./fonts.css";        
+@import "./theme.css";        
+@import "./tailwind.css";     
 
 /* ---------------- Global Styles ---------------- */
 body {
   @apply antialiased bg-background text-foreground; /* soft orange background + dark text */
-  font-family: 'Inter', sans-serif;               /* optional, আপনার ফন্ট */
+  font-family: 'Inter', sans-serif;              
   transition: background-color 0.3s, color 0.3s; /* smooth theme transition */
 }
 

@@ -1,20 +1,30 @@
 const Recipe = require("../models/Recipe");
 
+// ১. রেসিপি তৈরি
+exports.create = async (req, res) => {
+  try {
+    const data = await Recipe.createNewRecipe(req.body);
+    res.status(201).json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to create recipe", error: err.message });
+  }
+};
+
 exports.getPublic = async (req, res) => {
   try {
     const data = await Recipe.fetchPublicRecipes();
     res.json(data);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Error fetching public recipes", error: err.message });
   }
 };
 
-exports.getRecommend = async (req, res) => {
+exports.getById = async (req, res) => {
   try {
-    const userId = req.params.userId;
-    const data = await Recipe.fetchRecommendations(userId);
+    const data = await Recipe.fetchRecipeById(req.params.id);
+    if (!data) return res.status(404).json({ message: "Recipe not found!" });
     res.json(data);
   } catch (err) {
-    res.status(500).json({ message: "Server Error: Could not fetch recommendations" });
+    res.status(500).json({ message: "Invalid ID format or server error" });
   }
 };

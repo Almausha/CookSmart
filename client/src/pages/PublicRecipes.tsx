@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { Search, Clock, Flame, ChefHat, Utensils, Loader2 } from 'lucide-react';
-
 import api from '../services/api'; 
 
 interface Recipe {
@@ -18,11 +18,11 @@ export default function PublicRecipes() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-   
         const response = await api.get('/recipes/public');
         setRecipes(response.data);
       } catch (err) {
@@ -114,7 +114,7 @@ export default function PublicRecipes() {
                 <div className="flex flex-wrap gap-2">
                   {recipe.ingredients.slice(0, 3).map((ing, idx) => (
                     <span key={idx} className="px-2 py-1 bg-white/5 rounded-md text-[10px] text-gray-400 font-bold border border-white/5">
-                      {ing.ingredientId.name}
+                      {ing.ingredientId?.name || 'Ingredient'}
                     </span>
                   ))}
                   {recipe.ingredients.length > 3 && (
@@ -123,8 +123,11 @@ export default function PublicRecipes() {
                 </div>
               </div>
 
-              {/* Action Button */}
-              <button className="w-full py-4 bg-white/5 hover:bg-white text-white hover:text-black font-black rounded-2xl border border-white/10 transition-all flex items-center justify-center gap-3 group/btn cursor-pointer">
+              {/* Action Button - */}
+              <button 
+                onClick={() => navigate(`/user-dashboard/recipe/${recipe._id}`)}
+                className="w-full py-4 bg-white/5 hover:bg-white text-white hover:text-black font-black rounded-2xl border border-white/10 transition-all flex items-center justify-center gap-3 group/btn cursor-pointer"
+              >
                 <Utensils className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
                 View Full Recipe
               </button>

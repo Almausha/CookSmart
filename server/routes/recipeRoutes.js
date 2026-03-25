@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const recipeController = require("../controllers/recipeController");
 
-// Public recipes
+
+router.post("/", recipeController.create);
+
 router.get("/public", recipeController.getPublic);
 
-// Pantry recommendations
-router.get("/recommend/:userId", recipeController.getRecommend);
+router.get("/:id", recipeController.getById);
 
 module.exports = router;
