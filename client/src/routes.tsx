@@ -8,6 +8,7 @@ import RecipeDetails from "./pages/RecipeDetails";
 import AddRecipe from "./pages/AddRecipe"; 
 import UserAddRecipe from "./pages/UserAddRecipe"; 
 import AdminMasterIngredients from "./pages/AdminMasterIngredients"; 
+import Feed from "./pages/Feed"; // ✅ NEW
 
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
@@ -44,7 +45,8 @@ export const router = createBrowserRouter([
       { path: "explore", element: <PantryRecommendation /> },
       { path: "create-recipe", element: <UserAddRecipe /> },
       { path: "public-recipes", element: <PublicRecipes /> },
-      { path: "recipe/:id", element: <RecipeDetails /> }
+      { path: "recipe/:id", element: <RecipeDetails /> },
+      { path: "feed", element: <Feed /> }, // ✅ NEW
     ]
   },
 
@@ -61,10 +63,7 @@ export const router = createBrowserRouter([
         )
       },
       { path: "add-recipe", element: <AddRecipe /> },
-      
-   
       { path: "master-ingredients", element: <AdminMasterIngredients /> }, 
-
       { path: "users", element: <UserManagement /> },
       { path: "analytics", element: <AnalyticsPage /> },
       { 
