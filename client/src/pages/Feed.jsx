@@ -9,7 +9,10 @@ const Feed = () => {
   const [search, setSearch] = useState("");
 
   // Get current user from localStorage (matches your existing auth setup)
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const currentUser = {
+  _id: localStorage.getItem("userId"),
+  name: localStorage.getItem("userName"),
+};
 
   const loadPosts = async () => {
     try {
