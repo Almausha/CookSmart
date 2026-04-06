@@ -79,8 +79,13 @@ export default function PublicRecipes() {
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute top-4 left-4 bg-orange-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
-                {recipe.difficulty}
+              <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                recipe.difficulty?.toLowerCase() === 'easy' ? 'bg-green-500 text-white' :
+                recipe.difficulty?.toLowerCase() === 'medium' ? 'bg-yellow-500 text-black' :
+                recipe.difficulty?.toLowerCase() === 'hard' ? 'bg-red-500 text-white' :
+                'bg-orange-500 text-white'
+              }`}>
+                {recipe.difficulty || 'N/A'}
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChefHat, Plus, Youtube, Save, Loader2, ListChecks, ShoppingBasket, Image as ImageIcon, X, CheckCircle2 } from "lucide-react";
+import { ChefHat, Plus, Youtube, Save, Loader2, ListChecks, ShoppingBasket, Image as ImageIcon, X, CheckCircle2, Filter } from "lucide-react";
 import api from "../services/api";
 
 export default function AddRecipe() {
@@ -18,9 +18,9 @@ export default function AddRecipe() {
     steps: [""],
     ingredients: [{ ingredientId: "", value: "", unit: "g" }],
     isPublic: true,
+    recipeTag: [] as string[],
   });
 
-  // ১. ইনগ্রেডিয়েন্ট লিস্ট ফেচ করা এবং ড্রাফট ডাটা রিকভার করা
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
@@ -33,7 +33,6 @@ export default function AddRecipe() {
 
     fetchIngredients();
 
-    // মাস্টার পেজ থেকে ফিরে আসলে ডাটা রিকভারি
     const savedDraft = localStorage.getItem("recipe_draft");
     if (savedDraft) {
       setRecipeData(JSON.parse(savedDraft));
@@ -41,13 +40,14 @@ export default function AddRecipe() {
     }
   }, []);
 
-  // ২. মাস্টার ইনগ্রেডিয়েন্ট অ্যাড করতে যাওয়ার আগে ডাটা সেভ করা
   const handleQuickAddIngredient = () => {
     localStorage.setItem("recipe_draft", JSON.stringify(recipeData));
     navigate("/admin-dashboard/master-ingredients");
   };
 
-  const addStep = () => setRecipeData({ ...recipeData, steps: [...recipeData.steps, ""] });
+  const addStep = () => setRecipeData({ 
+    ...recipeData, steps: [...recipeData.steps, ""] 
+  });
   
   const addIngredientField = () => setRecipeData({
     ...recipeData, 
@@ -59,19 +59,27 @@ export default function AddRecipe() {
     setRecipeData({ ...recipeData, ingredients: newIngs });
   };
 
+  const toggleTag = (tag: string) => {
+    setRecipeData(prev => ({
+      ...prev,
+      recipeTag: prev.recipeTag.includes(tag)
+        ? prev.recipeTag.filter(t => t !== tag)
+        : [...prev.recipeTag, tag]
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       const ownerId = localStorage.getItem("userId");
       
-      // ব্যাকএন্ড স্কিমা (RecipeSchema) অনুযায়ী ডাটা ফরম্যাট করা
       const formattedIngredients = recipeData.ingredients
         .filter(ing => ing.ingredientId !== "" && ing.value !== "") 
         .map(ing => ({
           ingredientId: ing.ingredientId,
-          quantityValue: Number(ing.value), // backend expects Number
-          unit: ing.unit                   // backend expects unit string
+          quantityValue: Number(ing.value),
+          unit: ing.unit
         }));
 
       const finalData = {
@@ -83,7 +91,8 @@ export default function AddRecipe() {
         imageUrl: recipeData.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
         steps: recipeData.steps.filter(s => s.trim() !== ""),
         ingredients: formattedIngredients,
-        isPublic: recipeData.isPublic
+        isPublic: recipeData.isPublic,
+        recipeTag: recipeData.recipeTag
       };
       
       const response = await api.post("/recipes", finalData);
@@ -129,7 +138,7 @@ export default function AddRecipe() {
 
       <form onSubmit={handleSubmit} className="space-y-10">
         
-        {/* IMAGE SECTION */}
+        {/* IMAGE */}
         <div className="space-y-4">
           <label className="text-orange-500 font-black text-[10px] uppercase tracking-[0.3em] ml-2 flex items-center gap-2">
             <ImageIcon className="w-3 h-3" /> Recipe Visual URL
@@ -182,6 +191,29 @@ export default function AddRecipe() {
           </div>
         </div>
 
+        {/* FR-20: Diet Tags */}
+        <div className="space-y-3">
+        <label className="text-orange-500 font-black text-[10px] uppercase tracking-[0.3em] ml-2 flex items-center gap-2">
+          <Filter className="w-3 h-3" /> Diet Tags (select all that apply)
+        </label>
+          <div className="flex flex-wrap gap-3">
+            {['vegan', 'diabetic', 'halal', 'weight-loss'].map(tag => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => toggleTag(tag)}
+                className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-2 transition-all cursor-pointer ${
+                  recipeData.recipeTag.includes(tag)
+                    ? 'bg-white text-orange-500 border-white scale-105 shadow-lg'
+                    : 'bg-transparent text-white border-white/20 hover:border-white/50'
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* YouTube */}
         <div className="space-y-4">
           <label className="text-red-500 font-black text-[10px] uppercase tracking-[0.3em] ml-2 flex items-center gap-2">
@@ -202,13 +234,17 @@ export default function AddRecipe() {
             <label className="text-green-500 font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-2">
               <ListChecks className="w-3 h-3" /> Cooking Algorithm (Steps)
             </label>
-            <button type="button" onClick={addStep} className="text-[10px] font-black text-orange-500 hover:text-orange-400 flex items-center gap-1 bg-transparent p-0 border-none cursor-pointer uppercase tracking-tighter">
+            <button 
+              type="button" 
+              onClick={addStep} 
+              className="text-[10px] font-black text-orange-500 hover:text-orange-400 flex items-center gap-1 bg-transparent p-0 border-none cursor-pointer uppercase tracking-tighter"
+            >
               <Plus size={12} /> Add Phase
             </button>
           </div>
           {recipeData.steps.map((step, idx) => (
             <div key={idx} className="relative group">
-               <textarea 
+              <textarea 
                 placeholder={`Step ${idx + 1} details...`}
                 className="w-full bg-white/5 border border-white/5 p-4 rounded-2xl text-gray-300 outline-none resize-none font-medium focus:border-green-500/30 transition-all"
                 rows={2}
@@ -232,7 +268,7 @@ export default function AddRecipe() {
           ))}
         </div>
 
-        {/* Ingredient Mapping Section */}
+        {/* Ingredients */}
         <div className="space-y-4">
           <div className="flex justify-between items-center px-2">
             <label className="text-blue-400 font-black text-[10px] uppercase tracking-[0.3em] flex items-center gap-2">
@@ -242,14 +278,14 @@ export default function AddRecipe() {
               <button 
                 type="button" 
                 onClick={handleQuickAddIngredient} 
-                className="text-[10px] font-black text-green-400 hover:text-green-300 flex items-center gap-1 bg-transparent p-0 border-none cursor-pointer uppercase tracking-tighter border-b border-green-400/20"
+                className="text-[10px] font-black text-green-400 hover:text-green-300 flex items-center gap-1 bg-transparent p-0 border-none cursor-pointer uppercase tracking-tighter"
               >
                 <Plus size={12} /> Master Item
               </button>
               <button 
                 type="button" 
                 onClick={addIngredientField} 
-                className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 bg-transparent p-0 border-none cursor-pointer uppercase tracking-tighter border-b border-blue-400/20"
+                className="text-[10px] font-black text-blue-400 hover:text-blue-300 flex items-center gap-1 bg-transparent p-0 border-none cursor-pointer uppercase tracking-tighter"
               >
                 <Plus size={12} /> Component
               </button>
@@ -259,7 +295,6 @@ export default function AddRecipe() {
           <div className="grid gap-4">
             {recipeData.ingredients.map((ing, idx) => (
               <div key={idx} className="flex flex-col md:flex-row gap-3 bg-white/5 p-4 rounded-[2.5rem] border border-white/5 group animate-in slide-in-from-left-2 duration-300 relative">
-                {/* Ingredient Select */}
                 <select 
                   className="flex-grow bg-slate-800 border border-white/10 p-4 rounded-2xl text-white/80 outline-none focus:border-blue-500/30 font-medium"
                   value={ing.ingredientId}
@@ -276,7 +311,6 @@ export default function AddRecipe() {
                   ))}
                 </select>
 
-                {/* Quantity & Unit */}
                 <div className="flex gap-2">
                   <input 
                     type="number"
@@ -311,7 +345,6 @@ export default function AddRecipe() {
                   </select>
                 </div>
 
-                {/* Remove Ing Button */}
                 {recipeData.ingredients.length > 1 && (
                   <button 
                     type="button" 
