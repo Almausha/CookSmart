@@ -25,17 +25,18 @@ const youtubeRoutes = require('./routes/youtubeRoutes');
 const ingredientRoutes = require('./routes/ingredientRoutes'); 
 const userRecipeRoutes = require('./routes/userRecipeRoutes'); 
 const masterIngredientRoutes = require('./routes/masterIngredient.routes');
+const postRoutes = require('./routes/postRoutes'); // ✅ NEW
+
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/recommend', recipeRecommendRoutes);
 app.use('/api/check-missing', missingRoutes); 
 app.use('/api/video', youtubeRoutes);        
-
 app.use('/api/ingredients', ingredientRoutes); 
-app.use('/api/master-ingredients', masterIngredientRoutes); // master-ingredients করে দিন
-
+app.use('/api/master-ingredients', masterIngredientRoutes);
 app.use('/api/user-recipe', userRecipeRoutes); 
+app.use('/api/posts', postRoutes); // ✅ NEW
 
 // 5. MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
