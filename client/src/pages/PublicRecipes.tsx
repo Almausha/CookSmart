@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import { Search, Clock, Flame, ChefHat, Utensils, Loader2, ShieldAlert } from 'lucide-react';
+import { Search, Clock, Flame, ChefHat, Utensils, Loader2, AlertTriangle } from 'lucide-react';
 import api from '../services/api'; 
 
 interface Ingredient {
@@ -76,7 +76,6 @@ export default function PublicRecipes() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredRecipes.map((recipe) => {
 
-          // FR-21: Check if any ingredient is an allergen
           const allergenIngredients = recipe.ingredients.filter(
             ing => ing.ingredientId?.isAllergen
           );
@@ -108,10 +107,10 @@ export default function PublicRecipes() {
                   {recipe.difficulty || 'N/A'}
                 </div>
 
-                {/* FR-21: Allergen Warning Badge on card image */}
+                {/* Allergen Badge */}
                 {hasAllergen && (
                   <div className="absolute top-4 right-4 flex items-center gap-1 bg-red-500/90 text-white px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-wider backdrop-blur-sm">
-                    <ShieldAlert className="w-3 h-3" />
+                    <AlertTriangle className="w-3 h-3" />
                     Allergen
                   </div>
                 )}
@@ -129,11 +128,11 @@ export default function PublicRecipes() {
                   </div>
                 </div>
 
-                {/* FR-21: Allergen detail warning */}
+                {/* Allergen Detail */}
                 {hasAllergen && (
                   <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-3 space-y-1">
                     <div className="flex items-center gap-2">
-                      <ShieldAlert className="w-3 h-3 text-red-400" />
+                      <AlertTriangle className="w-3 h-3 text-red-400" />
                       <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Contains Allergens</p>
                     </div>
                     <p className="text-[10px] text-red-300/70 font-medium">
