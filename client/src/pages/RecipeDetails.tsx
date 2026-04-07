@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart, CheckCircle, ArrowLeft, Loader2, Clock, Flame, AlertTriangle, ChefHat, Zap, BarChart2, Droplet } from "lucide-react";
 import api from "../services/api";
+// import ShieldAlert from "../components/ShieldAlert";
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -188,7 +189,7 @@ export default function RecipeDetails() {
                         {/* FR-21: Allergen warning per ingredient */}
                         {ing.ingredientId?.isAllergen && (
                           <div className="flex items-center gap-1 mt-1">
-                            <ShieldAlert className="w-3 h-3 text-red-400" />
+                            <AlertTriangle className="w-3 h-3 text-red-400" />
                             <span className="text-[9px] text-red-400 font-black uppercase tracking-wider">Allergen</span>
                             {ing.ingredientId?.risks?.length > 0 && (
                               <span className="text-[9px] text-red-300/60 font-medium">
