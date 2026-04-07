@@ -3,7 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -20,25 +19,27 @@ app.get('/', (req, res) => {
 const authRoutes = require('./routes/authRoutes');
 const recipeRoutes = require('./routes/recipeRoutes');
 const recipeRecommendRoutes = require('./routes/recipeRecommendRoutes');
-const missingRoutes = require('./routes/missingRoutes'); 
+const missingRoutes = require('./routes/missingRoutes');
 const youtubeRoutes = require('./routes/youtubeRoutes');
-const ingredientRoutes = require('./routes/ingredientRoutes'); 
-const userRecipeRoutes = require('./routes/userRecipeRoutes'); 
+const ingredientRoutes = require('./routes/ingredientRoutes');
+const userRecipeRoutes = require('./routes/userRecipeRoutes');
 const masterIngredientRoutes = require('./routes/masterIngredient.routes');
-const postRoutes = require('./routes/postRoutes'); // ✅ Feature 1
-const reviewRoutes = require('./routes/reviewRoutes'); // ✅ Feature 2
+const postRoutes = require('./routes/postRoutes');           // ✅ Feature 1(fr11)
+const reviewRoutes = require('./routes/reviewRoutes');       // ✅ Feature 2(fr12)
+const shoppingListRoutes = require('./routes/shoppingListRoutes'); // ✅ Feature 3(fr13)
 
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/recommend', recipeRecommendRoutes);
-app.use('/api/check-missing', missingRoutes); 
-app.use('/api/video', youtubeRoutes);        
-app.use('/api/ingredients', ingredientRoutes); 
+app.use('/api/check-missing', missingRoutes);
+app.use('/api/video', youtubeRoutes);
+app.use('/api/ingredients', ingredientRoutes);
 app.use('/api/master-ingredients', masterIngredientRoutes);
-app.use('/api/user-recipe', userRecipeRoutes); 
-app.use('/api/posts', postRoutes); // ✅ Feature 1
-app.use('/api/reviews', reviewRoutes); // ✅ Feature 2
+app.use('/api/user-recipe', userRecipeRoutes);
+app.use('/api/posts', postRoutes);                          // ✅ Feature 1(fr11)
+app.use('/api/reviews', reviewRoutes);                      // ✅ Feature 2(fr12)
+app.use('/api/shopping-list', shoppingListRoutes);          // ✅ Feature 3(fr13)
 
 // 5. MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
