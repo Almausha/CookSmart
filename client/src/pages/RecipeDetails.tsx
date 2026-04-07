@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart, CheckCircle, ArrowLeft, Loader2, Clock, Flame, AlertTriangle, ChefHat, Zap, BarChart2, Droplet } from "lucide-react";
 import api from "../services/api";
+import RecipeReviews from "../components/RecipeReviews"; // ✅ Feature 2
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -160,6 +161,10 @@ export default function RecipeDetails() {
               ))}
             </div>
           </div>
+
+          {/* ✅ Feature 2: Reviews & Ratings Section */}
+          {id && <RecipeReviews recipeId={id} />}
+
         </div>
 
         {/* Sidebar: Ingredients with Substitute Logic */}

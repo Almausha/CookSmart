@@ -45,37 +45,49 @@ const CreatePost = ({ currentUser, onPostCreated }) => {
         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 space-y-4 animate-in fade-in duration-300">
           <h3 className="text-white font-bold text-lg">Create a Post</h3>
 
-          <input
-            type="text"
-            placeholder="Post title..."
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-orange-400/50 transition"
-          />
+          <div className="space-y-1">
+            <label className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Post Title *</label>
+            <input
+              type="text"
+              placeholder="e.g. My Homemade Pasta 🍝"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-400/50 transition"
+            />
+          </div>
 
-          <textarea
-            placeholder="What did you cook? Share your experience..."
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows={3}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-orange-400/50 transition resize-none"
-          />
+          <div className="space-y-1">
+            <label className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Description *</label>
+            <textarea
+              placeholder="e.g. I made this amazing pasta in 20 mins, here's how..."
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              rows={3}
+              className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-400/50 transition resize-none"
+            />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Image URL (optional)..."
-            value={imageUrl}
-            onChange={e => setImageUrl(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-orange-400/50 transition"
-          />
+          <div className="space-y-1">
+            <label className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Image URL (optional)</label>
+            <input
+              type="text"
+              placeholder="e.g. https://images.unsplash.com/..."
+              value={imageUrl}
+              onChange={e => setImageUrl(e.target.value)}
+              className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-400/50 transition"
+            />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Tags (comma separated, e.g. pasta, vegan, quick)..."
-            value={tags}
-            onChange={e => setTags(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-orange-400/50 transition"
-          />
+          <div className="space-y-1">
+            <label className="text-gray-400 text-xs font-semibold uppercase tracking-wider">Tags (optional)</label>
+            <input
+              type="text"
+              placeholder="e.g. pasta, italian, quick, vegan (separate with commas)"
+              value={tags}
+              onChange={e => setTags(e.target.value)}
+              className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-400/50 transition"
+            />
+          </div>
 
           <div className="flex gap-3 justify-end">
             <button
