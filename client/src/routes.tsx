@@ -9,6 +9,7 @@ import AddRecipe from "./pages/AddRecipe";
 import UserAddRecipe from "./pages/UserAddRecipe"; 
 import AdminMasterIngredients from "./pages/AdminMasterIngredients"; 
 import Feed from "./pages/Feed"; // ✅ NEW
+import DietFilter from "./pages/DietFilter"; // ✅ NEW
 
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
@@ -46,7 +47,8 @@ export const router = createBrowserRouter([
       { path: "create-recipe", element: <UserAddRecipe /> },
       { path: "public-recipes", element: <PublicRecipes /> },
       { path: "recipe/:id", element: <RecipeDetails /> },
-      { path: "feed", element: <Feed /> }, // ✅ NEW
+      { path: "feed", element: <Feed /> }, // ✅ Community Feed
+      { path: "diet-filter", element: <DietFilter /> }, // ✅ Diet Filter added
     ]
   },
 
