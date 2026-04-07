@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
-import { ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter } from 'lucide-react';
+import { ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter, Users } from 'lucide-react';
 import { logoutUser } from '../services/authService';
 import api from '../services/api'; 
 
@@ -83,12 +83,22 @@ export default function UserDashboard() {
                 <BookOpen className="w-6 h-6" />
                 Browse
               </button>
+
               <button
                 onClick={() => navigate('diet-filter')}
                 className="group bg-white/5 hover:bg-white/10 text-white border border-white/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
               >
                 <Filter className="w-6 h-6" />
                 Diet Filter
+              </button>
+
+              {/* ✅ New Feed Button */}
+              <button
+                onClick={() => navigate('feed')}
+                className="group bg-white/5 hover:bg-white/10 text-white border border-white/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
+              >
+                <Users className="w-6 h-6" />
+                Chef's Board
               </button>
             </div>
           </div>

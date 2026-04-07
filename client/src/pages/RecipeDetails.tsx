@@ -190,6 +190,24 @@ export default function RecipeDetails() {
                           {ing.ingredientId?.name || "Ingredient"}
                         </span>
                         <span className="text-xs text-gray-500 font-medium">{ing.quantity}</span>
+                        {/* FR-21: Allergen warning per ingredient */}
+                        {ing.ingredientId?.isAllergen && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <ShieldAlert className="w-3 h-3 text-red-400" />
+                            <span className="text-[9px] text-red-400 font-black uppercase tracking-wider">Allergen</span>
+                            {ing.ingredientId?.risks?.length > 0 && (
+                              <span className="text-[9px] text-red-300/60 font-medium">
+                                — {ing.ingredientId.risks.join(', ')}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {/* Substitute suggestion for allergen */}
+                        {ing.ingredientId?.isAllergen && ing.substituteSuggestions?.length > 0 && (
+                          <p className="text-[9px] text-orange-400 font-bold uppercase italic tracking-wider mt-1">
+                            Alt: {ing.substituteSuggestions.join(', ')}
+                          </p>
+                        )}
                       </div>
                       {!isMissing ? (
                         <CheckCircle className="w-5 h-5 text-green-500" />
