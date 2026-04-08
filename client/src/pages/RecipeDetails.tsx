@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ShoppingCart, CheckCircle, ArrowLeft, Loader2, Clock, Flame, AlertTriangle, ChefHat, Zap, BarChart2, Droplet } from "lucide-react";
+import { ShoppingCart, CheckCircle, ArrowLeft, Loader2, Clock, Flame, AlertTriangle, ChefHat, Zap, BarChart2, Droplet, ShieldAlert } from "lucide-react";
 import api from "../services/api";
 import RecipeReviews from "../components/RecipeReviews"; // ✅ Feature 2
+import { addToShoppingList } from "../services/shoppingListService"; // ✅ Feature 3
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -11,6 +12,7 @@ export default function RecipeDetails() {
   const [videoData, setVideoData] = useState<any>(null);
   const [missingData, setMissingData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [addedToCart, setAddedToCart] = useState(false); // ✅ Feature 3
 
   useEffect(() => {
     const fetchAllDetails = async () => {
@@ -40,6 +42,24 @@ export default function RecipeDetails() {
     if (id) fetchAllDetails();
   }, [id]);
 
+  // ✅ Feature 3: Add missing ingredients to shopping list
+  const handleAddToCart = async () => {
+    const userId = localStorage.getItem("userId") || "";
+    if (!missingData?.missing?.length) return;
+
+    const ingredients = missingData.missing.map((m: any) => ({
+      name: m.ingredientId?.name || m.name || "Unknown",
+      quantity: m.quantityValue ? `${m.quantityValue} ${m.unit || ''}`.trim() : "1",
+    }));
+
+    try {
+      await addToShoppingList(userId, ingredients);
+      setAddedToCart(true);
+    } catch (err) {
+      console.error("Failed to add to shopping list", err);
+    }
+  };
+
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-20 gap-4 text-orange-500">
       <Loader2 className="w-10 h-10 animate-spin" />
@@ -54,14 +74,12 @@ export default function RecipeDetails() {
     </div>
   );
 
-  // FR-17: difficulty color logic
   const difficultyColor =
     recipe.difficulty === "easy" ? "text-green-400" :
     recipe.difficulty === "medium" ? "text-yellow-400" :
     recipe.difficulty === "hard" ? "text-red-400" :
     "text-gray-400";
 
-  // FR-18/19: nutrition values with fallback to 0
   const nutrition = recipe.nutrition || {};
   const calories = nutrition.calories || 0;
   const protein  = nutrition.protein  || 0;
@@ -96,7 +114,6 @@ export default function RecipeDetails() {
         <div className="lg:col-span-2 space-y-8 text-left">
           <h1 className="text-5xl font-black text-white tracking-tighter italic">{recipe.title}</h1>
 
-          {/* FR-16 + FR-17: Cooking Time + Difficulty Badges */}
           <div className="flex flex-wrap gap-4">
             <div className="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3">
               <Clock className="w-5 h-5 text-blue-400" />
@@ -107,7 +124,6 @@ export default function RecipeDetails() {
               <span className="text-white font-bold">{calories} kcal</span>
             </div>
 
-            {/* FR-17: Difficulty Badge */}
             {recipe.difficulty && (
               <div className="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3">
                 <ChefHat className="w-5 h-5 text-yellow-400" />
@@ -125,7 +141,7 @@ export default function RecipeDetails() {
             )}
           </div>
 
-          {/* FR-18/19: Nutrition Card */}
+          {/* Nutrition Card */}
           <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
             <h3 className="text-xs font-black text-white/40 uppercase tracking-widest mb-4">
               Nutritional Information
@@ -167,7 +183,7 @@ export default function RecipeDetails() {
 
         </div>
 
-        {/* Sidebar: Ingredients with Substitute Logic */}
+        {/* Sidebar: Ingredients */}
         <div className="space-y-6">
           <div className="bg-gradient-to-br from-white/10 to-transparent p-8 rounded-[3rem] border border-white/10 shadow-xl backdrop-blur-md">
             <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2">
@@ -190,7 +206,6 @@ export default function RecipeDetails() {
                           {ing.ingredientId?.name || "Ingredient"}
                         </span>
                         <span className="text-xs text-gray-500 font-medium">{ing.quantity}</span>
-                        {/* FR-21: Allergen warning per ingredient */}
                         {ing.ingredientId?.isAllergen && (
                           <div className="flex items-center gap-1 mt-1">
                             <AlertTriangle className="w-3 h-3 text-red-400" />
@@ -202,7 +217,6 @@ export default function RecipeDetails() {
                             )}
                           </div>
                         )}
-                        {/* Substitute suggestion for allergen */}
                         {ing.ingredientId?.isAllergen && ing.substituteSuggestions?.length > 0 && (
                           <p className="text-[9px] text-orange-400 font-bold uppercase italic tracking-wider mt-1">
                             Alt: {ing.substituteSuggestions.join(', ')}
@@ -219,7 +233,6 @@ export default function RecipeDetails() {
                       )}
                     </div>
 
-                    {/* Substitute Logic Section */}
                     {isMissing && (
                       <div className="pl-3 border-l-2 border-orange-500/30 py-1">
                         {ing.substituteSuggestions && ing.substituteSuggestions.length > 0 ? (
@@ -238,10 +251,28 @@ export default function RecipeDetails() {
               })}
             </div>
 
+            {/* ✅ Feature 3: Add Missing to Shopping List Button */}
             {missingData && !missingData.isReady && (
-              <button className="w-full mt-8 py-4 bg-orange-600 text-white rounded-2xl font-black hover:bg-orange-500 transition-all transform hover:scale-105 shadow-lg shadow-orange-900/20 uppercase tracking-widest text-xs">
-                Add Missing to Cart
-              </button>
+              <div className="space-y-3 mt-8">
+                <button
+                  onClick={handleAddToCart}
+                  className={`w-full py-4 rounded-2xl font-black transition-all transform hover:scale-105 shadow-lg uppercase tracking-widest text-xs ${
+                    addedToCart
+                      ? 'bg-green-600 text-white shadow-green-900/20'
+                      : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-900/20'
+                  }`}
+                >
+                  {addedToCart ? '✅ Added to Shopping List!' : '🛒 Add Missing to Shopping List'}
+                </button>
+                {addedToCart && (
+                  <button
+                    onClick={() => navigate('/user-dashboard/shopping-list')}
+                    className="w-full py-3 rounded-2xl font-black border border-orange-500/30 text-orange-400 hover:bg-orange-500/10 transition text-xs uppercase tracking-widest"
+                  >
+                    View Shopping List →
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>

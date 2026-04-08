@@ -10,7 +10,8 @@ import UserAddRecipe from "./pages/UserAddRecipe";
 import AdminMasterIngredients from "./pages/AdminMasterIngredients"; 
 import Feed from "./pages/Feed"; 
 import DietFilter from "./pages/DietFilter"; 
-import Profile from "./pages/Profile"; // ✅ Fix 1: Added missing Import
+import Profile from "./pages/Profile"; // ✅ From your branch
+import ShoppingList from "./pages/ShoppingList"; // ✅ From anindita's branch
 
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
@@ -48,9 +49,10 @@ export const router = createBrowserRouter([
       { path: "create-recipe", element: <UserAddRecipe /> },
       { path: "public-recipes", element: <PublicRecipes /> },
       { path: "recipe/:id", element: <RecipeDetails /> },
-      { path: "feed", element: <Feed /> }, // ✅ Fix 2: Removed duplicate feed path
-      { path: "diet-filter", element: <DietFilter /> },
-      { path: "profile/:userId", element: <Profile /> }, // ✅ Profile route
+      { path: "feed", element: <Feed /> }, 
+      { path: "diet-filter", element: <DietFilter /> }, 
+      { path: "profile/:userId", element: <Profile /> }, // ✅ Kept your profile route
+      { path: "shopping-list", element: <ShoppingList /> }, // ✅ Added anindita's shopping list
     ]
   },
 
