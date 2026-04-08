@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchPosts } from "../services/postService";
 import PostCard from "../components/PostCard";
 import CreatePost from "../components/CreatePost";
@@ -8,11 +9,11 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  // Get current user from localStorage (matches your existing auth setup)
+  // Get current user from localStorage
   const currentUser = {
-  _id: localStorage.getItem("userId"),
-  name: localStorage.getItem("userName"),
-};
+    _id: localStorage.getItem("userId") || "",
+    name: localStorage.getItem("userName") || "User",
+  };
 
   const loadPosts = async () => {
     try {
@@ -31,8 +32,8 @@ const Feed = () => {
   }, []);
 
   const filteredPosts = posts.filter(p =>
-    p.title.toLowerCase().includes(search.toLowerCase()) ||
-    p.description.toLowerCase().includes(search.toLowerCase()) ||
+    p.title?.toLowerCase().includes(search.toLowerCase()) ||
+    p.description?.toLowerCase().includes(search.toLowerCase()) ||
     p.tags?.some(t => t.toLowerCase().includes(search.toLowerCase()))
   );
 
@@ -40,14 +41,29 @@ const Feed = () => {
     <div className="min-h-screen w-full text-white px-4 py-8">
       <div className="max-w-2xl mx-auto">
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-black tracking-tight mb-1">
-            Recipe <span className="text-orange-400">Feed</span>
-          </h1>
-          <p className="text-white/40 text-sm font-medium">
-            See what the community is cooking 🍳
-          </p>
+        {/* Header Section with Precise Left Alignment */}
+        <div className="flex justify-between items-start mb-10">
+          <div className="flex flex-col items-start justify-start">
+            <h1 className="text-4xl font-black tracking-tight leading-tight m-0 p-0 text-left">
+              Recipe <span className="text-orange-400">Feed</span>
+            </h1>
+            <p className="text-white/40 text-sm font-medium mt-1 m-0 p-0 text-left">
+              See what the community is cooking 🍳
+            </p>
+          </div>
+
+          {/* Profile Icon with White Background */}
+          <Link 
+            to={`/user-dashboard/profile/${currentUser._id}`}
+            className="flex flex-col items-center group"
+          >
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black font-black text-xl hover:bg-orange-400 hover:text-white transition-all">
+              {currentUser.name.charAt(0).toUpperCase()}
+            </div>
+            <span className="text-[10px] uppercase tracking-widest text-white/20 group-hover:text-orange-400 mt-1 transition-colors">
+              Profile
+            </span>
+          </Link>
         </div>
 
         {/* Search */}
