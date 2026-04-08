@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Plus, Loader2, Image as ImageIcon, X, Package, CheckCircle2 } from "lucide-react";
 import api from "../services/api";
 
+// Define interface for data structure consistency
 interface RecipeIngredient {
   ingredientId: string;
   name: string;
@@ -28,13 +29,21 @@ export default function UserAddRecipe() {
     recipeTag: [] as string[],
   });
 
+  // 1. Fetch User Ingredients from Pantry
   useEffect(() => {
     const fetchPantry = async () => {
       setIsPantryLoading(true);
       try {
         const userId = localStorage.getItem("userId");
-        if (!userId) { setIsPantryLoading(false); return; }
+        if (!userId) { 
+          setIsPantryLoading(false); 
+          return; 
+        }
+        
+        // Ensure this route matches your backend router
         const res = await api.get(`/user-recipe/user-ingredients/${userId}`);
+        
+        // Handle different possible response structures
         const data = Array.isArray(res.data) ? res.data : (res.data.data || []);
         setPantryItems(data);
       } catch (err) {
@@ -46,6 +55,7 @@ export default function UserAddRecipe() {
     fetchPantry();
   }, []);
 
+  // 2. Add item to ingredient list when pantry item is clicked
   const addFromPantry = (item: any) => {
     const exists = recipeData.ingredients.find(i => i.ingredientId === item._id);
     if (!exists) {
@@ -88,6 +98,7 @@ export default function UserAddRecipe() {
     }));
   };
 
+  // 3. Final Submit Function
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (recipeData.ingredients.length === 0) {
@@ -97,25 +108,28 @@ export default function UserAddRecipe() {
     setLoading(true);
     try {
       const ownerId = localStorage.getItem("userId");
+
+      // Format ingredients to match backend schema (quantityValue)
       const formattedIngredients = recipeData.ingredients.map(ing => ({
         ingredientId: ing.ingredientId,
         quantityValue: Number(ing.value) || 0,
         unit: ing.unit,
         substituteSuggestions: ing.substituteSuggestions
       }));
+
       const finalPayload = {
+        ownerId,
         title: recipeData.title,
         difficulty: recipeData.difficulty,
         cookingTime: recipeData.cookingTime,
         videourl: recipeData.videourl,
         imageUrl: recipeData.imageUrl || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c",
-        ownerId,
-        ingredients: formattedIngredients,
         steps: recipeData.steps.filter(s => s.trim() !== ""),
+        ingredients: formattedIngredients,
         isPublic: recipeData.isPublic,
-        recipeTag: recipeData.recipeTag,
-        // nutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 } 
+        recipeTag: recipeData.recipeTag
       };
+
       await api.post("/user-recipe/recipes", finalPayload);
       setShowSuccess(true);
       setTimeout(() => { window.location.reload(); }, 2500);
@@ -128,11 +142,11 @@ export default function UserAddRecipe() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-10 text-white space-y-8 relative font-sans">
+    <div className="max-w-6xl mx-auto p-4 md:p-10 text-white space-y-8 relative font-sans text-left">
       
       {/* Success Modal */}
       {showSuccess && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-in fade-in zoom-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl">
           <div className="text-center space-y-6">
             <div className="mx-auto w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce">
               <CheckCircle2 className="text-white w-12 h-12" />
@@ -162,7 +176,7 @@ export default function UserAddRecipe() {
                 key={item._id}
                 type="button"
                 onClick={() => addFromPantry(item)}
-                className="bg-white/5 hover:bg-orange-500 border border-white/10 px-4 py-2 rounded-full text-xs transition-all flex items-center gap-2 group text-white"
+                className="bg-white/5 hover:bg-orange-500 border border-white/10 px-4 py-2 rounded-full text-xs transition-all flex items-center gap-2 group text-white cursor-pointer"
               >
                 <Plus size={12} className="group-hover:rotate-90 transition-transform" />
                 {item.name}
@@ -183,7 +197,7 @@ export default function UserAddRecipe() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-10">
-          {/* Image Preview */}
+          {/* Image Upload Area */}
           <div className="space-y-4">
             <div className="h-72 bg-black/40 rounded-[2.5rem] border border-white/5 flex items-center justify-center relative overflow-hidden">
               {recipeData.imageUrl ? (
@@ -210,7 +224,7 @@ export default function UserAddRecipe() {
             />
             <div className="grid grid-cols-2 gap-4">
               <select 
-                className="bg-slate-800 border border-white/10 p-4 rounded-2xl outline-none focus:border-orange-500 text-white"
+                className="bg-slate-800 border border-white/10 p-4 rounded-2xl outline-none focus:border-orange-500 text-white cursor-pointer"
                 value={recipeData.difficulty}
                 onChange={(e) => setRecipeData({...recipeData, difficulty: e.target.value})}
               >
@@ -226,12 +240,12 @@ export default function UserAddRecipe() {
               />
             </div>
 
-            {/* FR-20: Diet Tags */}
-            <div className="space-y-3 px-9">
-              <label className="text-white/120 font-bold text-sm italic pl-5">
-                Add Diet Tags — Select all that apply
+            {/* Diet Tags */}
+            <div className="space-y-3">
+              <label className="text-white/60 font-bold text-sm italic pl-1">
+                Diet Tags — Select all that apply
               </label>
-              <div className="flex flex-wrap gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-2">
                 {['vegan', 'diabetic', 'halal', 'weight-loss'].map(tag => (
                   <button
                     key={tag}
@@ -239,8 +253,8 @@ export default function UserAddRecipe() {
                     onClick={() => toggleTag(tag)}
                     className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-2 transition-all cursor-pointer ${
                       recipeData.recipeTag.includes(tag)
-                        ? 'bg-white text-orange-500 border-white scale-105 shadow-md'
-                        : 'bg-white/10 text-white border-white/20 hover:bg-white/20 hover:border-white/40'
+                        ? 'bg-white text-orange-500 border-white scale-105'
+                        : 'bg-white/10 text-white border-white/20 hover:border-white/40'
                     }`}
                   >
                     {tag}
@@ -251,7 +265,7 @@ export default function UserAddRecipe() {
           </div>
         </div>
 
-        {/* Ingredients Mapping */}
+        {/* Ingredients List */}
         <div className="space-y-6">
           <h3 className="text-xl font-black italic uppercase border-l-4 border-orange-500 pl-4 text-white">
             Ingredients Mapping
@@ -292,7 +306,7 @@ export default function UserAddRecipe() {
                   <button 
                     type="button" 
                     onClick={() => removeIngredient(ing.ingredientId)} 
-                    className="text-red-500 hover:scale-110 transition-transform"
+                    className="text-red-500 hover:scale-110 transition-transform cursor-pointer"
                   >
                     <X size={16} />
                   </button>
@@ -334,14 +348,13 @@ export default function UserAddRecipe() {
             <button 
               type="button" 
               onClick={addStep} 
-              className="ml-14 px-6 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-white"
+              className="ml-14 px-6 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-white cursor-pointer"
             >
               + Add Step
             </button>
           </div>
         </div>
 
-        {/* Submit */}
         <button 
           type="submit" disabled={loading}
           className="w-full bg-orange-600 hover:bg-orange-500 p-8 rounded-[2.5rem] font-black uppercase tracking-[0.3em] transition-all shadow-xl disabled:opacity-50 text-white cursor-pointer"
