@@ -208,7 +208,7 @@ export default function RecipeDetails() {
                         <span className="text-xs text-gray-500 font-medium">{ing.quantity}</span>
                         {ing.ingredientId?.isAllergen && (
                           <div className="flex items-center gap-1 mt-1">
-                            <ShieldAlert className="w-3 h-3 text-red-400" />
+                            <AlertTriangle className="w-3 h-3 text-red-400" />
                             <span className="text-[9px] text-red-400 font-black uppercase tracking-wider">Allergen</span>
                             {ing.ingredientId?.risks?.length > 0 && (
                               <span className="text-[9px] text-red-300/60 font-medium">
