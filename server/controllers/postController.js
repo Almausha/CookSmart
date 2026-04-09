@@ -1,16 +1,31 @@
 const Post = require('../models/Post');
 
-// GET all posts (feed)
+// 1. GET all posts (Global Feed) - Populated with nutrition data
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 });
+    const posts = await Post.find()
+      .populate("recipeId") 
+      .sort({ createdAt: -1 });
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch posts', error: err.message });
   }
 };
 
-// POST create a new post
+// 2. GET posts by a specific user (User Profile)
+const getUserPosts = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const posts = await Post.find({ userId: userId })
+      .populate("recipeId")
+      .sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch profile posts', error: err.message });
+  }
+};
+
+// 3. POST create a new post
 const createPost = async (req, res) => {
   try {
     const { userId, username, title, description, imageUrl, recipeId, tags } = req.body;
@@ -22,7 +37,7 @@ const createPost = async (req, res) => {
   }
 };
 
-// PUT like / unlike a post
+// 4. PUT toggle like / unlike
 const toggleLike = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -44,7 +59,7 @@ const toggleLike = async (req, res) => {
   }
 };
 
-// POST add a comment
+// 5. POST add a comment
 const addComment = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -60,7 +75,7 @@ const addComment = async (req, res) => {
   }
 };
 
-// PUT increment share count
+// 6. PUT increment share count
 const sharePost = async (req, res) => {
   try {
     const post = await Post.findByIdAndUpdate(
@@ -75,7 +90,7 @@ const sharePost = async (req, res) => {
   }
 };
 
-// DELETE a post
+// 7. DELETE a post
 const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -93,4 +108,12 @@ const deletePost = async (req, res) => {
   }
 };
 
-module.exports = { getAllPosts, createPost, toggleLike, addComment, sharePost, deletePost };
+module.exports = { 
+  getAllPosts, 
+  getUserPosts, 
+  createPost, 
+  toggleLike, 
+  addComment, 
+  sharePost, 
+  deletePost 
+};

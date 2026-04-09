@@ -5,7 +5,6 @@ import { fetchShoppingList, togglePurchased, removeItem, clearShoppingList } fro
 
 const stores = [
   { name: "Chaldal", color: "text-green-400", bg: "hover:bg-green-500/10", getUrl: (item: string) => `https://chaldal.com/search/${encodeURIComponent(item)}` },
-
   { name: "Shawpno", color: "text-orange-400", bg: "hover:bg-orange-500/10", getUrl: (item: string) => `https://www.shwapno.com/search?q=${encodeURIComponent(item)}` },
 ];
 
@@ -67,7 +66,6 @@ export default function ShoppingList() {
   };
 
   const remaining = ingredients.filter(i => !i.isPurchased).length;
-  const purchased = ingredients.filter(i => i.isPurchased).length;
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
@@ -81,15 +79,20 @@ export default function ShoppingList() {
       </button>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-black text-white tracking-tight">
+      <div className="flex items-start justify-between mb-8">
+        <div className="flex flex-col items-start justify-start">
+          <h1 className="text-4xl font-black text-white tracking-tight leading-tight m-0 p-0 text-left">
             Shopping <span className="text-orange-400">List</span>
           </h1>
-          <p className="text-white/40 text-sm font-medium mt-1">
-            {remaining > 0 ? `${remaining} item${remaining !== 1 ? 's' : ''} left to buy` : ingredients.length > 0 ? '🎉 All items purchased!' : 'Your list is empty'}
+          <p className="text-white/40 text-sm font-medium mt-1 m-0 p-0 text-left">
+            {remaining > 0 
+              ? `${remaining} item${remaining !== 1 ? 's' : ''} left to buy` 
+              : ingredients.length > 0 
+                ? '🎉 All items purchased!' 
+                : 'Your list is empty'}
           </p>
         </div>
+        
         <div className="flex gap-2">
           <button
             onClick={loadList}
@@ -111,45 +114,42 @@ export default function ShoppingList() {
       {/* Progress Bar */}
       {ingredients.length > 0 && (
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-          <div className="flex justify-between text-xs text-white/40 font-bold mb-2">
-            <span>{purchased} purchased</span>
+          <div className="flex justify-between text-xs text-white/40 font-bold mb-2 uppercase tracking-widest">
+            <span>{ingredients.length - remaining} purchased</span>
             <span>{ingredients.length} total</span>
           </div>
           <div className="w-full bg-white/10 rounded-full h-2">
             <div
-              className="bg-orange-500 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${ingredients.length > 0 ? (purchased / ingredients.length) * 100 : 0}%` }}
+              className="bg-orange-500 h-2 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+              style={{ width: `${ingredients.length > 0 ? ((ingredients.length - remaining) / ingredients.length) * 100 : 0}%` }}
             />
           </div>
         </div>
       )}
 
-      {/* Loading */}
+      {/* Loading & Empty States */}
       {loading ? (
         <div className="flex justify-center py-20">
           <div className="w-10 h-10 border-2 border-orange-400 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : ingredients.length === 0 ? (
-        <div className="text-center py-20 space-y-4">
-          <ShoppingCart className="w-16 h-16 text-white/10 mx-auto" />
-          <p className="text-white/20 uppercase tracking-widest text-xs font-black">
-            No items yet — add missing ingredients from a recipe!
+        <div className="text-center py-20 space-y-4 bg-white/5 rounded-[2.5rem] border border-dashed border-white/10">
+          <ShoppingCart className="w-16 h-16 text-white/5 mx-auto" />
+          <p className="text-white/20 uppercase tracking-[0.2em] text-[10px] font-black">
+            No items yet — add missing ingredients from recipes!
           </p>
         </div>
       ) : (
         <div className="space-y-3">
-
-          {/* Unpurchased items first */}
+          {/* Unpurchased items */}
           {ingredients.filter(i => !i.isPurchased).map((item) => (
-            <div key={item._id} className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl px-5 py-4 hover:bg-white/[0.08] transition group">
+            <div key={item._id} className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl px-5 py-4 hover:bg-white/[0.08] transition group text-left">
               <button onClick={() => handleToggle(item._id)} className="flex-shrink-0">
                 <Circle className="w-6 h-6 text-white/30 hover:text-orange-400 transition" />
               </button>
               <div className="flex-1">
                 <p className="text-white font-bold">{item.name}</p>
-                {item.quantity && (
-                  <p className="text-white/40 text-xs font-medium">{item.quantity}</p>
-                )}
+                {item.quantity && <p className="text-white/40 text-xs font-medium">{item.quantity}</p>}
               </div>
 
               {/* Buy Online Dropdown */}
@@ -176,9 +176,9 @@ export default function ShoppingList() {
                 )}
               </div>
 
-              <button
-                onClick={() => handleRemove(item._id)}
-                className="text-white/20 hover:text-red-400 transition opacity-0 group-hover:opacity-100"
+              <button 
+                onClick={() => handleRemove(item._id)} 
+                className="text-white/10 hover:text-red-400 transition opacity-0 group-hover:opacity-100 p-2"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -187,25 +187,19 @@ export default function ShoppingList() {
 
           {/* Purchased items */}
           {ingredients.filter(i => i.isPurchased).map((item) => (
-            <div key={item._id} className="flex items-center gap-4 bg-white/[0.02] border border-white/5 rounded-2xl px-5 py-4 transition group opacity-60">
+            <div key={item._id} className="flex items-center gap-4 bg-white/[0.02] border border-white/5 rounded-2xl px-5 py-4 transition group opacity-50 text-left">
               <button onClick={() => handleToggle(item._id)} className="flex-shrink-0">
-                <CheckCircle className="w-6 h-6 text-green-500" />
+                <CheckCircle className="w-6 h-6 text-green-500/70" />
               </button>
               <div className="flex-1">
-                <p className="text-white/40 font-bold line-through">{item.name}</p>
-                {item.quantity && (
-                  <p className="text-white/20 text-xs font-medium">{item.quantity}</p>
-                )}
+                <p className="text-white/30 font-bold line-through italic">{item.name}</p>
+                {item.quantity && <p className="text-white/10 text-xs font-medium">{item.quantity}</p>}
               </div>
-              <button
-                onClick={() => handleRemove(item._id)}
-                className="text-white/20 hover:text-red-400 transition opacity-0 group-hover:opacity-100"
-              >
+              <button onClick={() => handleRemove(item._id)} className="text-white/10 hover:text-red-400 transition opacity-0 group-hover:opacity-100 p-2">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
           ))}
-
         </div>
       )}
     </div>

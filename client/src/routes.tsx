@@ -8,9 +8,10 @@ import RecipeDetails from "./pages/RecipeDetails";
 import AddRecipe from "./pages/AddRecipe"; 
 import UserAddRecipe from "./pages/UserAddRecipe"; 
 import AdminMasterIngredients from "./pages/AdminMasterIngredients"; 
-import Feed from "./pages/Feed";                     // ✅ fr11
-import DietFilter from "./pages/DietFilter";          // ✅ fr20
-import ShoppingList from "./pages/ShoppingList";      // ✅ fr13
+import Feed from "./pages/Feed"; 
+import DietFilter from "./pages/DietFilter"; 
+import Profile from "./pages/Profile"; // ✅ From your branch
+import ShoppingList from "./pages/ShoppingList"; // ✅ From anindita's branch
 
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
@@ -48,9 +49,10 @@ export const router = createBrowserRouter([
       { path: "create-recipe", element: <UserAddRecipe /> },
       { path: "public-recipes", element: <PublicRecipes /> },
       { path: "recipe/:id", element: <RecipeDetails /> },
-      { path: "feed", element: <Feed /> },                          // ✅ Feature 1
-      { path: "diet-filter", element: <DietFilter /> },             // ✅ Teammate's feature
-      { path: "shopping-list", element: <ShoppingList /> },         // ✅ Feature 3
+      { path: "feed", element: <Feed /> }, 
+      { path: "diet-filter", element: <DietFilter /> }, 
+      { path: "profile/:userId", element: <Profile /> }, // ✅ Kept your profile route
+      { path: "shopping-list", element: <ShoppingList /> }, // ✅ Added anindita's shopping list
     ]
   },
 

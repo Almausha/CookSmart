@@ -128,16 +128,17 @@ export default function PublicRecipes() {
                   </div>
                 </div>
 
-                {/* Allergen Detail */}
+                {/* Allergen Detail - FIXED TypeScript Error Here */}
                 {hasAllergen && (
                   <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-3 space-y-1">
                     <div className="flex items-center gap-2">
                       <AlertTriangle className="w-3 h-3 text-red-400" />
                       <p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Contains Allergens</p>
                     </div>
-                    <p className="text-[10px] text-red-300/70 font-medium">
+                    <p className="text-[10px] text-red-300/70 font-medium leading-relaxed">
                       {allergenIngredients.map(ing => ing.ingredientId?.name).join(', ')}
-                      {allergenIngredients.some(ing => ing.ingredientId?.risks?.length > 0) && (
+                      {/* Fixed logic using optional chaining and nullish coalescing */}
+                      {allergenIngredients.some(ing => (ing.ingredientId?.risks?.length ?? 0) > 0) && (
                         <span> — {allergenIngredients.flatMap(ing => ing.ingredientId?.risks || []).join(', ')}</span>
                       )}
                     </p>
@@ -179,7 +180,7 @@ export default function PublicRecipes() {
                 {/* Action Button */}
                 <button 
                   onClick={() => navigate(`/user-dashboard/recipe/${recipe._id}`)}
-                  className="w-full py-4 bg-white/5 hover:bg-white text-white hover:text-black font-black rounded-2xl border border-white/10 transition-all flex items-center justify-center gap-3 group/btn cursor-pointer"
+                  className="w-full py-4 bg-white/5 hover:bg-white text-white hover:text-black font-black rounded-2xl border border-white/10 transition-all flex items-center justify-center gap-3 group/btn cursor-pointer active:scale-95"
                 >
                   <Utensils className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
                   View Full Recipe
