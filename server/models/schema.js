@@ -46,9 +46,11 @@ const IngredientSchema = new Schema({
 
 /* ================= 4. PANTRY ================= */
 const PantrySchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: Schema.Types.ObjectId, 
+    ref: "User", required: true },
   ingredients: [{
     ingredientId: { type: Schema.Types.ObjectId, ref: "Ingredient" },
+    ingredientName: { type: String, required: true },
     currentQuantity: { type: Number, default: 0 },
     unit: {
       type: String,
