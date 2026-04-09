@@ -27,6 +27,7 @@ const userRecipeRoutes = require('./routes/userRecipeRoutes');
 const masterIngredientRoutes = require('./routes/masterIngredient.routes');
 const postRoutes = require('./routes/postRoutes'); // ✅ Feature 1
 const reviewRoutes = require('./routes/reviewRoutes'); // ✅ Feature 2
+const pantryRoutes = require('./routes/pantryRoutes'); 
 
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
@@ -37,6 +38,7 @@ app.use('/api/video', youtubeRoutes);
 app.use('/api/ingredients', ingredientRoutes); 
 app.use('/api/master-ingredients', masterIngredientRoutes);
 app.use('/api/user-recipe', userRecipeRoutes); 
+app.use('/api/pantry', pantryRoutes);
 app.use('/api/posts', postRoutes); // ✅ Feature 1
 app.use('/api/reviews', reviewRoutes); // ✅ Feature 2
 
