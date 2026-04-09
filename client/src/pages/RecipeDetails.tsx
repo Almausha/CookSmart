@@ -82,7 +82,7 @@ export default function RecipeDetails() {
         <ArrowLeft className="w-4 h-4" /> Back to Kitchen
       </button>
 
-      {/* Video/Image Section */}
+      {/* Media Section */}
       <div className="relative group">
         {videoData?.embedUrl ? (
           <div className="aspect-video rounded-[3rem] overflow-hidden border-8 border-white/5 shadow-2xl bg-black">
@@ -103,7 +103,7 @@ export default function RecipeDetails() {
         <div className="lg:col-span-2 space-y-8 text-left">
           <h1 className="text-5xl font-black text-white tracking-tighter italic">{recipe.title}</h1>
 
-          {/* Highlights */}
+          {/* Key Highlights */}
           <div className="flex flex-wrap gap-4">
             <div className="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3">
               <Clock className="w-5 h-5 text-blue-400" />
@@ -119,7 +119,7 @@ export default function RecipeDetails() {
             </div>
           </div>
 
-          {/* Nutrition Stats */}
+          {/* Nutrition Grid */}
           <div className="bg-white/5 p-6 rounded-3xl border border-white/10 grid grid-cols-3 gap-4">
              <div className="text-center">
                 <Zap className="w-5 h-5 text-red-400 mx-auto mb-2" />
@@ -138,13 +138,13 @@ export default function RecipeDetails() {
              </div>
           </div>
 
-          {/* Steps */}
+          {/* Step-by-Step Instructions */}
           <div className="space-y-4">
             <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Cooking Steps</h3>
             {recipe.steps?.map((step: string, idx: number) => (
-              <div key={idx} className="bg-white/5 p-6 rounded-3xl border border-white/5 flex gap-5">
+              <div key={idx} className="bg-white/5 p-6 rounded-3xl border border-white/5 flex gap-5 hover:bg-white/[0.08] transition-all">
                 <span className="text-orange-500 font-black text-2xl">{idx + 1}</span>
-                <p className="text-gray-300 font-medium">{step}</p>
+                <p className="text-gray-300 font-medium leading-relaxed">{step}</p>
               </div>
             ))}
           </div>
@@ -152,7 +152,7 @@ export default function RecipeDetails() {
           {id && <RecipeReviews recipeId={id} />}
         </div>
 
-        {/* Sidebar: Ingredients (COMPLETELY FIXED QUANTITY LOGIC) */}
+        {/* Sidebar: Ingredients & Availability */}
         <div className="space-y-6">
           <div className="bg-gradient-to-br from-white/10 to-transparent p-8 rounded-[3rem] border border-white/10 shadow-xl backdrop-blur-md">
             <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2">
@@ -166,20 +166,21 @@ export default function RecipeDetails() {
                   (m.ingredientId?._id || m.ingredientId || m._id || m).toString() === recipeIngId
                 );
 
-                // ✅ Improved logic to find quantity from all possible fields
+                // Quantity mapping logic
                 const displayQuantity = ing.quantity 
                   ? ing.quantity 
                   : (ing.quantityValue ? `${ing.quantityValue} ${ing.unit || ""}` : "As needed");
 
                 return (
                   <div key={idx} className="flex flex-col gap-1 border-b border-white/5 pb-4 last:border-0">
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between group">
                       <div className="flex flex-col">
-                        <span className={`font-bold ${!isMissing ? "text-white" : "text-gray-500 line-through decoration-red-500/50"}`}>
+                        {/* Name logic with strikethrough for missing */}
+                        <span className={`font-bold transition-all ${!isMissing ? "text-white" : "text-gray-500 line-through decoration-red-500/50"}`}>
                           {ing.ingredientId?.name || ing.name || "Ingredient"}
                         </span>
                         
-                        {/* Displaying fixed quantity here */}
+                        {/* Fixed Quantity Display */}
                         <span className="text-xs text-orange-400 font-black uppercase tracking-wider mt-0.5">
                           {displayQuantity}
                         </span>
@@ -191,36 +192,52 @@ export default function RecipeDetails() {
                         )}
                       </div>
                       
+                      {/* Availability Icon */}
                       {!isMissing ? (
                         <CheckCircle size={18} className="text-green-500" />
                       ) : (
-                        <AlertTriangle size={18} className="text-red-500" />
+                        <div className="flex items-center gap-1">
+                          <AlertTriangle size={18} className="text-red-500" />
+                          <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-1 rounded-md font-black uppercase border border-red-500/20">Missing</span>
+                        </div>
                       )}
                     </div>
 
-                    {isMissing && ing.substituteSuggestions?.length > 0 && (
-                      <p className="text-[10px] text-orange-300 italic font-medium mt-1 pl-2 border-l border-orange-500/50">
-                        Try: {ing.substituteSuggestions.join(", ")}
-                      </p>
+                    {/* Original Substitute Logic (Preserved) */}
+                    {isMissing && (
+                      <div className="pl-3 border-l-2 border-orange-500/30 py-1 mt-1">
+                        {ing.substituteSuggestions && ing.substituteSuggestions.length > 0 ? (
+                          <p className="text-[10px] text-orange-400 font-bold uppercase italic tracking-wider">
+                            Try: {ing.substituteSuggestions.join(", ")}
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-gray-600 italic uppercase font-bold tracking-tighter">
+                            No substitute available
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
                 );
               })}
             </div>
 
-            {/* Shopping List Section */}
+            {/* Action Button: Shopping List */}
             {missingData && !missingData.isReady && (
               <div className="mt-8 space-y-3">
                 <button
                   onClick={handleAddToCart}
-                  className={`w-full py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all ${
-                    addedToCart ? 'bg-green-600 text-white shadow-lg' : 'bg-orange-600 hover:bg-orange-500 text-white'
+                  className={`w-full py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all transform hover:scale-[1.02] shadow-lg ${
+                    addedToCart ? 'bg-green-600 text-white shadow-green-900/20' : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-900/20'
                   }`}
                 >
                   {addedToCart ? '✅ Added to List' : '🛒 Add Missing to List'}
                 </button>
                 {addedToCart && (
-                  <button onClick={() => navigate('/user-dashboard/shopping-list')} className="w-full py-3 text-orange-400 text-[10px] font-black uppercase tracking-widest border border-orange-500/20 rounded-xl hover:bg-white/5 transition">
+                  <button 
+                    onClick={() => navigate('/user-dashboard/shopping-list')} 
+                    className="w-full py-3 text-orange-400 text-[10px] font-black uppercase tracking-widest border border-orange-500/20 rounded-xl hover:bg-white/5 transition"
+                  >
                     View List →
                   </button>
                 )}
