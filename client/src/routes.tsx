@@ -10,20 +10,15 @@ import UserAddRecipe from "./pages/UserAddRecipe";
 import AdminMasterIngredients from "./pages/AdminMasterIngredients"; 
 import Feed from "./pages/Feed"; 
 import DietFilter from "./pages/DietFilter"; 
-import Profile from "./pages/Profile"; // ✅ From your branch
-import ShoppingList from "./pages/ShoppingList"; // ✅ From anindita's branch
+import Profile from "./pages/Profile";
+import ShoppingList from "./pages/ShoppingList";
+import CookingHistory from "./pages/CookingHistory"; // Feature 5
+import Analytics from "./pages/Analytics";           // Feature 5
 
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
     <h2 className="text-2xl font-bold text-blue-400 mb-2">User Management Console</h2>
     <p className="text-gray-400 font-medium italic">Manage system users and access levels here...</p>
-  </div>
-);
-
-const AnalyticsPage = () => (
-  <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
-    <h2 className="text-2xl font-bold text-purple-400 mb-2">Live Statistics</h2>
-    <p className="text-gray-400 font-medium italic">Real-time data and system performance metrics...</p>
   </div>
 );
 
@@ -51,8 +46,9 @@ export const router = createBrowserRouter([
       { path: "recipe/:id", element: <RecipeDetails /> },
       { path: "feed", element: <Feed /> }, 
       { path: "diet-filter", element: <DietFilter /> }, 
-      { path: "profile/:userId", element: <Profile /> }, // ✅ Kept your profile route
-      { path: "shopping-list", element: <ShoppingList /> }, // ✅ Added anindita's shopping list
+      { path: "profile/:userId", element: <Profile /> },
+      { path: "shopping-list", element: <ShoppingList /> },
+      { path: "cooking-history", element: <CookingHistory /> }, // Feature 5
     ]
   },
 
@@ -71,7 +67,7 @@ export const router = createBrowserRouter([
       { path: "add-recipe", element: <AddRecipe /> },
       { path: "master-ingredients", element: <AdminMasterIngredients /> }, 
       { path: "users", element: <UserManagement /> },
-      { path: "analytics", element: <AnalyticsPage /> },
+      { path: "analytics", element: <Analytics /> }, // Feature 5 - Real analytics
       { 
         path: "settings", 
         element: (

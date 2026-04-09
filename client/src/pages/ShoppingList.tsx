@@ -72,7 +72,7 @@ export default function ShoppingList() {
 
       {/* Back Button */}
       <button
-        onClick={() => navigate(-1)}
+        onClick={() => navigate('/user-dashboard/public-recipes')}
         className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-bold uppercase text-xs tracking-widest"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Kitchen
