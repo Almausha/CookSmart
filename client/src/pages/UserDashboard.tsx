@@ -60,6 +60,15 @@ export default function UserDashboard() {
 
             {/* --- ACTION BUTTONS --- */}
             <div className="flex flex-wrap gap-4 justify-center">
+
+            <button
+                onClick={() => navigate('explore')} 
+                className="group bg-primary hover:opacity-90 text-primary-foreground px-8 py-5 rounded-2xl font-black text-lg transition-all shadow-xl shadow-primary/40 flex items-center gap-3 active:scale-95 border-none cursor-pointer"
+              >
+                <Zap className="w-6 h-6 fill-current" />
+                My Pantry
+              </button>
+
               <button
                 onClick={() => navigate('explore')} 
                 className="group bg-primary hover:opacity-90 text-primary-foreground px-8 py-5 rounded-2xl font-black text-lg transition-all shadow-xl shadow-primary/40 flex items-center gap-3 active:scale-95 border-none cursor-pointer"
