@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE = '/pantry';
+const BASE = '/api/pantry';
 const api = axios.create({
   baseURL: 'http://localhost:5000/api',
 });
