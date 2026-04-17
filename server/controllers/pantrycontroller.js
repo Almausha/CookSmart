@@ -15,7 +15,7 @@ exports.createPantryItem = async (req, res) => {
         const { name } = req.body;
         const newItem = await Pantry.create({ ...name, userId: req.user._id });
         if (newItem) not in await getMasterIngredient(name);
-            const masterIngredientadd = await addMasterIngredient({ name });  // have to see if this works, if not will have to resort to the  other way.
+             addMasterIngredient({ name });  // have to see if this works, if not will have to resort to the other way.
         res.status(201).json({ success: true, data: newItem });
     } catch (err) {
         res.status(500).json({ message: "Failed to add ingredient", error: err.message });
