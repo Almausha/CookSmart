@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
-import { ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter, Users } from 'lucide-react';
+import { WandSparkles, ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter, Users } from 'lucide-react';
 import { logoutUser } from '../services/authService';
 import api from '../services/api'; 
 
@@ -11,7 +11,7 @@ export default function UserDashboard() {
 
   const isHome = location.pathname === '/user-dashboard' || location.pathname === '/user-dashboard/';
 
-  useEffect(() => {
+  useEffect(() => {  
     const fetchUserData = async () => {
       try {
         const response = await api.get('/auth/profile'); 
@@ -62,7 +62,7 @@ export default function UserDashboard() {
             <div className="flex flex-wrap gap-4 justify-center">
 
             <button
-                onClick={() => navigate('explore')} 
+                onClick={() => navigate('explore')} // change the explore here
                 className="group bg-primary hover:opacity-90 text-primary-foreground px-8 py-5 rounded-2xl font-black text-lg transition-all shadow-xl shadow-primary/40 flex items-center gap-3 active:scale-95 border-none cursor-pointer"
               >
                 <Zap className="w-6 h-6 fill-current" />
@@ -73,7 +73,7 @@ export default function UserDashboard() {
                 onClick={() => navigate('explore')} 
                 className="group bg-primary hover:opacity-90 text-primary-foreground px-8 py-5 rounded-2xl font-black text-lg transition-all shadow-xl shadow-primary/40 flex items-center gap-3 active:scale-95 border-none cursor-pointer"
               >
-                <Zap className="w-6 h-6 fill-current" />
+                <WandSparkles className="w-6 h-6 fill-current" />
                 Magic Kitchen
               </button>
 
