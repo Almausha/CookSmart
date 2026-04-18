@@ -8,6 +8,7 @@ export default function UserDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [userName, setUserName] = useState(localStorage.getItem("userName") || "User");
+  const myId = localStorage.getItem("userId");
 
   const isHome = location.pathname === '/user-dashboard' || location.pathname === '/user-dashboard/';
 
@@ -43,7 +44,23 @@ export default function UserDashboard() {
       <div className="relative z-10 max-w-6xl w-full px-6 text-center">
         
         {isHome ? (
-          <div className="bg-card/10 backdrop-blur-2xl rounded-[3.5rem] border border-white/20 p-12 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+          <div className="bg-card/10 backdrop-blur-2xl rounded-[3.5rem] border border-white/20 p-12 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center">
+            
+            {/* --- Profile Icon (Now INSIDE the card) --- */}
+            <div className="absolute top-10 right-10">
+              <Link 
+                to={`/user-dashboard/profile/${myId}`}
+                className="group flex flex-col items-center gap-1"
+              >
+                <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center text-white font-black text-xl hover:bg-white hover:text-black transition-all">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-[10px] uppercase tracking-widest text-white/30 group-hover:text-white transition-colors">
+                  Profile
+                </span>
+              </Link>
+            </div>
+
             <div className="absolute -top-24 -left-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl"></div>
             
             <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-tr from-primary to-orange-400 rounded-3xl mb-8 shadow-2xl shadow-primary/40 animate-pulse">
@@ -101,7 +118,6 @@ export default function UserDashboard() {
                 Diet Filter
               </button>
 
-              {/* ✅ New Feed Button */}
               <button
                 onClick={() => navigate('feed')}
                 className="group bg-white/5 hover:bg-white/10 text-white border border-white/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
@@ -112,10 +128,10 @@ export default function UserDashboard() {
             </div>
           </div>
         ) : (
-          <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col items-center">
              <button 
                 onClick={() => navigate('/user-dashboard')}
-                className="mb-8 text-white/50 hover:text-primary flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-colors bg-transparent border-none cursor-pointer p-0 shadow-none"
+                className="mb-8 text-white/50 hover:text-primary flex items-center gap-2 font-bold uppercase tracking-widest text-xs transition-colors bg-transparent border-none cursor-pointer p-0 shadow-none self-start"
              >
                 <ArrowRight className="w-4 h-4 rotate-180" /> Back to Hub
              </button>
@@ -126,18 +142,15 @@ export default function UserDashboard() {
           </div>
         )}
         
-        {/* 3. Footer & Logout */}
+        {/* Footer */}
         <div className="mt-12 flex flex-col items-center gap-4">
           <button 
             onClick={logoutUser} 
-            className="flex items-center gap-2 text-white/40 hover:text-red-500 transition-colors font-bold uppercase tracking-widest text-[10px] group bg-transparent border-none cursor-pointer shadow-none p-2"
+            className="flex items-center gap-2 text-white/40 hover:text-red-500 transition-colors font-bold uppercase tracking-widest text-[10px] group bg-transparent border-none cursor-pointer p-2 shadow-none"
           >
             <LogOut className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
             Exit Session
           </button>
-          <p className="text-white/10 text-[9px] font-black tracking-[0.5em] uppercase">
-            CookSmart AI • Authorized Access
-          </p>
         </div>
       </div>
     </div>

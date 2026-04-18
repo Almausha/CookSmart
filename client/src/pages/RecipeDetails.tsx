@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ShoppingCart, CheckCircle, ArrowLeft, Loader2, Clock, Flame, AlertTriangle, ChefHat, Zap, BarChart2, Droplet } from "lucide-react";
+import { 
+  ShoppingCart, CheckCircle, ArrowLeft, Loader2, Clock, Flame, 
+  AlertTriangle, ChefHat, Zap, BarChart2, Droplet 
+} from "lucide-react";
 import api from "../services/api";
-import RecipeReviews from "../components/RecipeReviews"; // ✅ Feature 2
+import RecipeReviews from "../components/RecipeReviews"; 
+import { addToShoppingList } from "../services/shoppingListService"; 
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -11,6 +15,7 @@ export default function RecipeDetails() {
   const [videoData, setVideoData] = useState<any>(null);
   const [missingData, setMissingData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     const fetchAllDetails = async () => {
@@ -26,9 +31,7 @@ export default function RecipeDetails() {
 
         if (recipeRes.status === "fulfilled") setRecipe(recipeRes.value.data);
         if (videoRes.status === "fulfilled") setVideoData(videoRes.value.data);
-        if (missingRes.status === "fulfilled") {
-          setMissingData(missingRes.value.data);
-        }
+        if (missingRes.status === "fulfilled") setMissingData(missingRes.value.data);
 
       } catch (err) {
         console.error("Critical Error fetching details:", err);
@@ -39,6 +42,23 @@ export default function RecipeDetails() {
 
     if (id) fetchAllDetails();
   }, [id]);
+
+  const handleAddToCart = async () => {
+    const userId = localStorage.getItem("userId") || "";
+    if (!missingData?.missing?.length) return;
+
+    const ingredients = missingData.missing.map((m: any) => ({
+      name: m.ingredientId?.name || m.name || "Unknown",
+      quantity: m.quantity || "1",
+    }));
+
+    try {
+      await addToShoppingList(userId, ingredients);
+      setAddedToCart(true);
+    } catch (err) {
+      console.error("Failed to add to shopping list", err);
+    }
+  };
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-20 gap-4 text-orange-500">
@@ -54,19 +74,7 @@ export default function RecipeDetails() {
     </div>
   );
 
-  // FR-17: difficulty color logic
-  const difficultyColor =
-    recipe.difficulty === "easy" ? "text-green-400" :
-    recipe.difficulty === "medium" ? "text-yellow-400" :
-    recipe.difficulty === "hard" ? "text-red-400" :
-    "text-gray-400";
-
-  // FR-18/19: nutrition values with fallback to 0
   const nutrition = recipe.nutrition || {};
-  const calories = nutrition.calories || 0;
-  const protein  = nutrition.protein  || 0;
-  const carbs    = nutrition.carbs    || 0;
-  const fat      = nutrition.fat      || 0;
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-10 animate-in fade-in duration-700">
@@ -74,7 +82,7 @@ export default function RecipeDetails() {
         <ArrowLeft className="w-4 h-4" /> Back to Kitchen
       </button>
 
-      {/* Video/Image Section */}
+      {/* Media Section */}
       <div className="relative group">
         {videoData?.embedUrl ? (
           <div className="aspect-video rounded-[3rem] overflow-hidden border-8 border-white/5 shadow-2xl bg-black">
@@ -83,7 +91,6 @@ export default function RecipeDetails() {
               src={videoData.embedUrl}
               title={recipe.title}
               frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>
           </div>
@@ -96,7 +103,7 @@ export default function RecipeDetails() {
         <div className="lg:col-span-2 space-y-8 text-left">
           <h1 className="text-5xl font-black text-white tracking-tighter italic">{recipe.title}</h1>
 
-          {/* FR-16 + FR-17: Cooking Time + Difficulty Badges */}
+          {/* Key Highlights */}
           <div className="flex flex-wrap gap-4">
             <div className="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3">
               <Clock className="w-5 h-5 text-blue-400" />
@@ -104,131 +111,108 @@ export default function RecipeDetails() {
             </div>
             <div className="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3">
               <Flame className="w-5 h-5 text-orange-500" />
-              <span className="text-white font-bold">{calories} kcal</span>
+              <span className="text-white font-bold">{nutrition.calories || 0} kcal</span>
             </div>
-
-            {/* FR-17: Difficulty Badge */}
-            {recipe.difficulty && (
-              <div className="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3">
-                <ChefHat className="w-5 h-5 text-yellow-400" />
-                <span className={`font-bold capitalize ${difficultyColor}`}>
-                  {recipe.difficulty}
-                </span>
-              </div>
-            )}
-
-            {missingData?.isReady && (
-              <div className="bg-green-500/20 px-6 py-3 rounded-2xl border border-green-500/30 flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span className="text-green-500 font-bold uppercase text-xs tracking-widest">Ready to Cook</span>
-              </div>
-            )}
+            <div className="bg-white/5 px-6 py-3 rounded-2xl border border-white/10 flex items-center gap-3">
+              <ChefHat className="w-5 h-5 text-yellow-400" />
+              <span className="text-white font-bold capitalize">{recipe.difficulty || "medium"}</span>
+            </div>
           </div>
 
-          {/* FR-18/19: Nutrition Card */}
-          <div className="bg-white/5 p-6 rounded-3xl border border-white/10">
-            <h3 className="text-xs font-black text-white/40 uppercase tracking-widest mb-4">
-              Nutritional Information
-            </h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white/5 p-4 rounded-2xl border border-white/5 text-center">
+          {/* Nutrition Grid */}
+          <div className="bg-white/5 p-6 rounded-3xl border border-white/10 grid grid-cols-3 gap-4">
+             <div className="text-center">
                 <Zap className="w-5 h-5 text-red-400 mx-auto mb-2" />
-                <p className="text-white font-black text-lg">{protein}g</p>
-                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Protein</p>
-              </div>
-              <div className="bg-white/5 p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-white font-black">{nutrition.protein || 0}g</p>
+                <p className="text-gray-500 text-[10px] uppercase font-bold">Protein</p>
+             </div>
+             <div className="text-center">
                 <BarChart2 className="w-5 h-5 text-yellow-400 mx-auto mb-2" />
-                <p className="text-white font-black text-lg">{carbs}g</p>
-                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Carbs</p>
-              </div>
-              <div className="bg-white/5 p-4 rounded-2xl border border-white/5 text-center">
+                <p className="text-white font-black">{nutrition.carbs || 0}g</p>
+                <p className="text-gray-500 text-[10px] uppercase font-bold">Carbs</p>
+             </div>
+             <div className="text-center">
                 <Droplet className="w-5 h-5 text-blue-400 mx-auto mb-2" />
-                <p className="text-white font-black text-lg">{fat}g</p>
-                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Fat</p>
-              </div>
-            </div>
+                <p className="text-white font-black">{nutrition.fat || 0}g</p>
+                <p className="text-gray-500 text-[10px] uppercase font-bold">Fat</p>
+             </div>
           </div>
 
-          {/* Cooking Steps */}
+          {/* Step-by-Step Instructions */}
           <div className="space-y-4">
             <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Cooking Steps</h3>
-            <div className="space-y-4">
-              {recipe.steps?.map((step: string, idx: number) => (
-                <div key={idx} className="bg-white/5 p-6 rounded-3xl border border-white/5 flex gap-5 hover:bg-white/[0.08] transition-all">
-                  <span className="text-orange-500 font-black text-2xl">{idx + 1}</span>
-                  <p className="text-gray-300 font-medium leading-relaxed">{step}</p>
-                </div>
-              ))}
-            </div>
+            {recipe.steps?.map((step: string, idx: number) => (
+              <div key={idx} className="bg-white/5 p-6 rounded-3xl border border-white/5 flex gap-5 hover:bg-white/[0.08] transition-all">
+                <span className="text-orange-500 font-black text-2xl">{idx + 1}</span>
+                <p className="text-gray-300 font-medium leading-relaxed">{step}</p>
+              </div>
+            ))}
           </div>
 
-          {/* ✅ Feature 2: Reviews & Ratings Section */}
           {id && <RecipeReviews recipeId={id} />}
-
         </div>
 
-        {/* Sidebar: Ingredients with Substitute Logic */}
+        {/* Sidebar: Ingredients & Availability */}
         <div className="space-y-6">
           <div className="bg-gradient-to-br from-white/10 to-transparent p-8 rounded-[3rem] border border-white/10 shadow-xl backdrop-blur-md">
             <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2">
               <ShoppingCart className="text-orange-500" /> Ingredients
             </h3>
+            
             <div className="space-y-6 text-left">
               {recipe.ingredients?.map((ing: any, idx: number) => {
                 const recipeIngId = (ing.ingredientId?._id || ing.ingredientId || "").toString();
+                const isMissing = missingData?.missing?.some((m: any) => 
+                  (m.ingredientId?._id || m.ingredientId || m._id || m).toString() === recipeIngId
+                );
 
-                const isMissing = missingData?.missing?.some((m: any) => {
-                  const mId = (m.ingredientId?._id || m.ingredientId || m._id || m).toString();
-                  return mId === recipeIngId;
-                });
+                // Quantity mapping logic
+                const displayQuantity = ing.quantity 
+                  ? ing.quantity 
+                  : (ing.quantityValue ? `${ing.quantityValue} ${ing.unit || ""}` : "As needed");
 
                 return (
-                  <div key={idx} className="flex flex-col gap-2 border-b border-white/5 pb-4 last:border-0">
-                    <div className="flex items-center justify-between group">
+                  <div key={idx} className="flex flex-col gap-1 border-b border-white/5 pb-4 last:border-0">
+                    <div className="flex items-start justify-between group">
                       <div className="flex flex-col">
-                        <span className={`font-bold transition-all ${!isMissing ? "text-white" : "text-gray-500 line-through decoration-red-500/40"}`}>
-                          {ing.ingredientId?.name || "Ingredient"}
+                        {/* Name logic with strikethrough for missing */}
+                        <span className={`font-bold transition-all ${!isMissing ? "text-white" : "text-gray-500 line-through decoration-red-500/50"}`}>
+                          {ing.ingredientId?.name || ing.name || "Ingredient"}
                         </span>
-                        <span className="text-xs text-gray-500 font-medium">{ing.quantity}</span>
-                        {/* FR-21: Allergen warning per ingredient */}
+                        
+                        {/* Fixed Quantity Display */}
+                        <span className="text-xs text-orange-400 font-black uppercase tracking-wider mt-0.5">
+                          {displayQuantity}
+                        </span>
+                        
                         {ing.ingredientId?.isAllergen && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <AlertTriangle className="w-3 h-3 text-red-400" />
-                            <span className="text-[9px] text-red-400 font-black uppercase tracking-wider">Allergen</span>
-                            {ing.ingredientId?.risks?.length > 0 && (
-                              <span className="text-[9px] text-red-300/60 font-medium">
-                                — {ing.ingredientId.risks.join(', ')}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        {/* Substitute suggestion for allergen */}
-                        {ing.ingredientId?.isAllergen && ing.substituteSuggestions?.length > 0 && (
-                          <p className="text-[9px] text-orange-400 font-bold uppercase italic tracking-wider mt-1">
-                            Alt: {ing.substituteSuggestions.join(', ')}
-                          </p>
+                          <span className="text-[9px] text-red-400 font-black mt-1 flex items-center gap-1 uppercase">
+                            <AlertTriangle size={10} /> Allergen
+                          </span>
                         )}
                       </div>
+                      
+                      {/* Availability Icon */}
                       {!isMissing ? (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        <CheckCircle size={18} className="text-green-500" />
                       ) : (
                         <div className="flex items-center gap-1">
-                          <AlertTriangle className="w-4 h-4 text-red-500" />
+                          <AlertTriangle size={18} className="text-red-500" />
                           <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-1 rounded-md font-black uppercase border border-red-500/20">Missing</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Substitute Logic Section */}
+                    {/* Original Substitute Logic (Preserved) */}
                     {isMissing && (
-                      <div className="pl-3 border-l-2 border-orange-500/30 py-1">
+                      <div className="pl-3 border-l-2 border-orange-500/30 py-1 mt-1">
                         {ing.substituteSuggestions && ing.substituteSuggestions.length > 0 ? (
                           <p className="text-[10px] text-orange-400 font-bold uppercase italic tracking-wider">
                             Try: {ing.substituteSuggestions.join(", ")}
                           </p>
                         ) : (
                           <p className="text-[10px] text-gray-600 italic uppercase font-bold tracking-tighter">
-                            No substitute to show
+                            No substitute available
                           </p>
                         )}
                       </div>
@@ -238,10 +222,26 @@ export default function RecipeDetails() {
               })}
             </div>
 
+            {/* Action Button: Shopping List */}
             {missingData && !missingData.isReady && (
-              <button className="w-full mt-8 py-4 bg-orange-600 text-white rounded-2xl font-black hover:bg-orange-500 transition-all transform hover:scale-105 shadow-lg shadow-orange-900/20 uppercase tracking-widest text-xs">
-                Add Missing to Cart
-              </button>
+              <div className="mt-8 space-y-3">
+                <button
+                  onClick={handleAddToCart}
+                  className={`w-full py-4 rounded-2xl font-black uppercase text-xs tracking-widest transition-all transform hover:scale-[1.02] shadow-lg ${
+                    addedToCart ? 'bg-green-600 text-white shadow-green-900/20' : 'bg-orange-600 hover:bg-orange-500 text-white shadow-orange-900/20'
+                  }`}
+                >
+                  {addedToCart ? '✅ Added to List' : '🛒 Add Missing to List'}
+                </button>
+                {addedToCart && (
+                  <button 
+                    onClick={() => navigate('/user-dashboard/shopping-list')} 
+                    className="w-full py-3 text-orange-400 text-[10px] font-black uppercase tracking-widest border border-orange-500/20 rounded-xl hover:bg-white/5 transition"
+                  >
+                    View List →
+                  </button>
+                )}
+              </div>
             )}
           </div>
         </div>

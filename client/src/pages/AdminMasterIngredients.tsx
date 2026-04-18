@@ -17,7 +17,6 @@ export default function AdminMasterIngredients() {
     healthBenefits: [] as string[],
   });
 
-  // ফিক্সড পাথ: /master-ingredients
   const fetchIngredients = async () => {
     try {
       const res = await api.get("/master-ingredients");
@@ -33,10 +32,9 @@ export default function AdminMasterIngredients() {
     e.preventDefault();
     setLoading(true);
     try {
-      // ফিক্সড পাথ: /master-ingredients
-      // FormData তে Protein, Carbs, Fat অলরেডি Number হিসেবে আছে (onChange এ করা হয়েছে)
       await api.post("/master-ingredients", formData);
       
+      // Error Fixed: Added missing 'risks' and 'healthBenefits' properties
       setFormData({ 
         name: "", 
         protein: 0, 
@@ -44,8 +42,11 @@ export default function AdminMasterIngredients() {
         fat: 0, 
         unit: "g", 
         isAllergen: false, 
-        qualityType: "fresh" 
+        qualityType: "fresh",
+        risks: [], 
+        healthBenefits: []
       });
+
       fetchIngredients();
     } catch (err) {
       alert("Error adding ingredient");
@@ -55,7 +56,6 @@ export default function AdminMasterIngredients() {
   const deleteItem = async (id: string) => {
     if(!confirm("Are you sure?")) return;
     try {
-      // ফিক্সড পাথ: /master-ingredients
       await api.delete(`/master-ingredients/${id}`);
       fetchIngredients();
     } catch (err) {
@@ -77,7 +77,6 @@ export default function AdminMasterIngredients() {
           <h2 className="text-xl font-bold mb-6 text-blue-400 italic">Register New Entry</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             
-            {/* Name */}
             <div className="space-y-2">
               <label className="text-[10px] uppercase font-black text-blue-500 ml-2">Ingredient Name</label>
               <input 
@@ -87,7 +86,6 @@ export default function AdminMasterIngredients() {
               />
             </div>
 
-            {/* Unit Dropdown */}
             <div className="space-y-2">
               <label className="text-[10px] uppercase font-black text-blue-500 ml-2">Base Unit (Per 100)</label>
               <div className="relative">
@@ -107,7 +105,6 @@ export default function AdminMasterIngredients() {
               </div>
             </div>
 
-            {/* Nutrition Inputs */}
             <div className="grid grid-cols-3 gap-3">
               {['protein', 'carbs', 'fat'].map((nutri) => (
                 <div key={nutri} className="space-y-1">
@@ -117,7 +114,6 @@ export default function AdminMasterIngredients() {
                   <input 
                     type="number" 
                     value={(formData as any)[nutri]}
-                    // Number() নিশ্চিত করছে ডাটাবেসে স্ট্রিং যাবে না
                     className="w-full bg-black/40 border border-white/10 p-3 rounded-xl text-xs outline-none focus:border-blue-500"
                     onChange={(e) => setFormData({...formData, [nutri]: Number(e.target.value)})}
                   />
@@ -125,8 +121,6 @@ export default function AdminMasterIngredients() {
               ))}
             </div>
 
-            {/* Allergen Toggle */}
-            {/* Allergen Toggle */}
             <div className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
               <div className="flex items-center gap-2">
                 <ShieldAlert size={14} className={formData.isAllergen ? "text-red-500" : "text-slate-500"} />
@@ -139,7 +133,6 @@ export default function AdminMasterIngredients() {
               />
             </div>
 
-            {/* Risks — only show when allergen is checked */}
             {formData.isAllergen && (
               <div className="space-y-2 animate-in fade-in duration-300">
                 <label className="text-[10px] uppercase font-black text-red-500 ml-2 flex items-center gap-1">
@@ -167,7 +160,6 @@ export default function AdminMasterIngredients() {
           </form>
         </div>
 
-        {/* Display List */}
         <div className="lg:col-span-2 space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             {ingredients.map((ing) => (

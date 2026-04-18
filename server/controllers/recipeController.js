@@ -2,12 +2,25 @@ const Recipe = require("../models/Recipe");
 const schemas = require("../models/schema");
 
 // Admin: Create Recipe
+const RecipeLogic = require("../models/UserAddRecipe"); 
+
+// Admin/User: Create Recipe with Auto-Nutrition Calculation
 exports.create = async (req, res) => {
   try {
-    const data = await Recipe.createNewRecipe(req.body);
-    res.status(201).json({ success: true, data });
+    // The saveUserRecipe function handles the nutrition logic (FR-18/19)
+    const data = await RecipeLogic.saveUserRecipe(req.body);
+
+    res.status(201).json({ 
+      success: true, 
+      message: "Recipe created and nutrition analyzed successfully",
+      data 
+    });
+
   } catch (err) {
-    res.status(500).json({ message: "Failed to create recipe", error: err.message });
+    res.status(500).json({
+      message: "Failed to create recipe",
+      error: err.message
+    });
   }
 };
 
