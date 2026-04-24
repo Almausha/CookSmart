@@ -5,8 +5,9 @@ import {
   AlertTriangle, ChefHat, Zap, BarChart2, Droplet 
 } from "lucide-react";
 import api from "../services/api";
-import RecipeReviews from "../components/RecipeReviews"; 
-import { addToShoppingList } from "../services/shoppingListService"; 
+import RecipeReviews from "../components/RecipeReviews"; // ✅ Feature 2
+import { addToShoppingList } from "../services/shoppingListService"; // ✅ Feature 3
+import { saveToHistory } from "../services/historyService";// ✅ Feature 5
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -31,7 +32,13 @@ export default function RecipeDetails() {
 
         if (recipeRes.status === "fulfilled") setRecipe(recipeRes.value.data);
         if (videoRes.status === "fulfilled") setVideoData(videoRes.value.data);
-        if (missingRes.status === "fulfilled") setMissingData(missingRes.value.data);
+        if (missingRes.status === "fulfilled") {
+          setMissingData(missingRes.value.data);
+        }
+        // ✅ Feature 5: Auto-save to cooking history
+        if (userId && id) {
+          saveToHistory(userId, id).catch(() => {});
+       }
 
       } catch (err) {
         console.error("Critical Error fetching details:", err);

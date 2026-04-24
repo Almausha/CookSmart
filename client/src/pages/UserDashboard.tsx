@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, useLocation, Link } from 'react-router-dom';
-import { ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter, Users } from 'lucide-react';
+import { ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter, Users, History, ShoppingCart } from 'lucide-react';
 import { logoutUser } from '../services/authService';
 import api from '../services/api'; 
 
@@ -46,7 +46,7 @@ export default function UserDashboard() {
         {isHome ? (
           <div className="bg-card/10 backdrop-blur-2xl rounded-[3.5rem] border border-white/20 p-12 shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center">
             
-            {/* --- Profile Icon (Now INSIDE the card) --- */}
+            {/* Profile Icon */}
             <div className="absolute top-10 right-10">
               <Link 
                 to={`/user-dashboard/profile/${myId}`}
@@ -75,7 +75,7 @@ export default function UserDashboard() {
               Ready to create some magic? Explore your pantry or publish your own recipe.
             </p>
 
-            {/* --- ACTION BUTTONS --- */}
+            {/* ACTION BUTTONS */}
             <div className="flex flex-wrap gap-4 justify-center">
               <button
                 onClick={() => navigate('explore')} 
@@ -115,6 +115,24 @@ export default function UserDashboard() {
               >
                 <Users className="w-6 h-6" />
                 Chef's Board
+              </button>
+
+              {/* ✅ Feature 5: My History Button */}
+              <button
+                onClick={() => navigate('cooking-history')}
+                className="group bg-purple-500/10 hover:bg-purple-500/20 text-white border border-purple-500/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
+              >
+                <History className="w-6 h-6 text-purple-400" />
+                My History
+              </button>
+
+              {/* Shopping List Button */}
+              <button
+                onClick={() => navigate('shopping-list')}
+                className="group bg-green-500/10 hover:bg-green-500/20 text-white border border-green-500/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
+              >
+                <ShoppingCart className="w-6 h-6 text-green-400" />
+                Shopping List
               </button>
             </div>
           </div>

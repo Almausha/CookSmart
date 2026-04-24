@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
-import { ShoppingCart, Trash2, CheckCircle, Circle, RefreshCw } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ShoppingCart, Trash2, CheckCircle, Circle, RefreshCw, ArrowLeft, ChevronDown } from "lucide-react";
 import { fetchShoppingList, togglePurchased, removeItem, clearShoppingList } from "../services/shoppingListService";
+
+const stores = [
+  { name: "Chaldal", color: "text-green-400", bg: "hover:bg-green-500/10", getUrl: (item: string) => `https://chaldal.com/search/${encodeURIComponent(item)}` },
+  { name: "Shawpno", color: "text-orange-400", bg: "hover:bg-orange-500/10", getUrl: (item: string) => `https://www.shwapno.com/search?q=${encodeURIComponent(item)}` },
+];
 
 export default function ShoppingList() {
   const [ingredients, setIngredients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const userId = localStorage.getItem("userId") || "";
+  const navigate = useNavigate();
 
   const loadList = async () => {
     try {
@@ -21,6 +29,12 @@ export default function ShoppingList() {
 
   useEffect(() => {
     if (userId) loadList();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdown(null);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   const handleToggle = async (ingredientId: string) => {
@@ -56,7 +70,15 @@ export default function ShoppingList() {
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
 
-      {/* Header - Alignment Fix Applied Here */}
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/user-dashboard/public-recipes')}
+        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-bold uppercase text-xs tracking-widest"
+      >
+        <ArrowLeft className="w-4 h-4" /> Back to Kitchen
+      </button>
+
+      {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div className="flex flex-col items-start justify-start">
           <h1 className="text-4xl font-black text-white tracking-tight leading-tight m-0 p-0 text-left">
@@ -129,7 +151,35 @@ export default function ShoppingList() {
                 <p className="text-white font-bold">{item.name}</p>
                 {item.quantity && <p className="text-white/40 text-xs font-medium">{item.quantity}</p>}
               </div>
-              <button onClick={() => handleRemove(item._id)} className="text-white/10 hover:text-red-400 transition opacity-0 group-hover:opacity-100 p-2">
+
+              {/* Buy Online Dropdown */}
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => setOpenDropdown(openDropdown === item._id ? null : item._id)}
+                  className="flex items-center gap-1 px-3 py-2 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 hover:bg-orange-500/20 transition text-xs font-bold"
+                >
+                  🛒 Buy Online <ChevronDown className="w-3 h-3" />
+                </button>
+                {openDropdown === item._id && (
+                  <div className="absolute right-0 top-10 z-50 bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl overflow-hidden w-44">
+                    {stores.map((store) => (
+                      <a
+                        key={store.name}
+                        href={store.getUrl(item.name)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-2 px-4 py-3 text-sm font-bold ${store.color} ${store.bg} transition border-b border-white/5 last:border-0`}>
+                        🛒 {store.name}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <button 
+                onClick={() => handleRemove(item._id)} 
+                className="text-white/10 hover:text-red-400 transition opacity-0 group-hover:opacity-100 p-2"
+              >
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>

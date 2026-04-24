@@ -24,9 +24,11 @@ const youtubeRoutes = require('./routes/youtubeRoutes');
 const ingredientRoutes = require('./routes/ingredientRoutes');
 const userRecipeRoutes = require('./routes/userRecipeRoutes');
 const masterIngredientRoutes = require('./routes/masterIngredient.routes');
-const postRoutes = require('./routes/postRoutes');           // ✅ Feature 1(fr11)
-const reviewRoutes = require('./routes/reviewRoutes');       // ✅ Feature 2(fr12)
-const shoppingListRoutes = require('./routes/shoppingListRoutes'); // ✅ Feature 3(fr13)
+const postRoutes = require('./routes/postRoutes');                 // Feature 1
+const reviewRoutes = require('./routes/reviewRoutes');             // Feature 2
+const shoppingListRoutes = require('./routes/shoppingListRoutes'); // Feature 3+4
+const historyRoutes = require('./routes/historyRoutes');           // Feature 5
+const analyticsRoutes = require('./routes/analyticsRoutes');       // Feature 5
 
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
@@ -37,20 +39,22 @@ app.use('/api/video', youtubeRoutes);
 app.use('/api/ingredients', ingredientRoutes);
 app.use('/api/master-ingredients', masterIngredientRoutes);
 app.use('/api/user-recipe', userRecipeRoutes);
-app.use('/api/posts', postRoutes);                          // ✅ Feature 1(fr11)
-app.use('/api/reviews', reviewRoutes);                      // ✅ Feature 2(fr12)
-app.use('/api/shopping-list', shoppingListRoutes);          // ✅ Feature 3(fr13)
+app.use('/api/posts', postRoutes);                                 // Feature 1
+app.use('/api/reviews', reviewRoutes);                             // Feature 2
+app.use('/api/shopping-list', shoppingListRoutes);                 // Feature 3+4
+app.use('/api/history', historyRoutes);                            // Feature 5
+app.use('/api/analytics', analyticsRoutes);                        // Feature 5
 
 // 5. MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('✔️ Connected to MongoDB Atlas');
+    console.log('Connected to MongoDB Atlas');
   })
   .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
+    console.error('MongoDB connection error:', err);
   });
 
 // 6. Start server
 app.listen(PORT, () => {
-  console.log(`⚡ Server running on port ${PORT}`);
+  console.log('Server running on port ' + PORT);
 });
