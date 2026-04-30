@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Outlet, useLocation, Link } from 'react-router-dom';
-import { ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter, Users, History, ShoppingCart } from 'lucide-react';
+import { ChefHat, ArrowRight, Zap, LogOut, BookOpen, PlusCircle, Filter, Users, History, ShoppingCart, Package2 } from 'lucide-react';
 import { logoutUser } from '../services/authService';
 import api from '../services/api'; 
 
@@ -117,7 +117,16 @@ export default function UserDashboard() {
                 Chef's Board
               </button>
 
-              {/* ✅ Feature 5: My History Button */}
+              {/* Pantry Management Button */}
+              <button
+                onClick={() => navigate('pantry')}
+                className="group bg-orange-500/10 hover:bg-orange-500/20 text-white border border-orange-500/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
+              >
+                <Package2 className="w-6 h-6 text-orange-400" />
+                My Pantry
+              </button>
+
+              {/* My History Button */}
               <button
                 onClick={() => navigate('cooking-history')}
                 className="group bg-purple-500/10 hover:bg-purple-500/20 text-white border border-purple-500/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
@@ -136,6 +145,7 @@ export default function UserDashboard() {
               </button>
             </div>
           </div>
+          
         ) : (
           <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col items-center">
              <button 
