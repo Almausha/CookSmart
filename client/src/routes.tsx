@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import ShoppingList from "./pages/ShoppingList";
 import CookingHistory from "./pages/CookingHistory"; // Feature 5
 import Analytics from "./pages/Analytics";           // Feature 5
+import PantryManagement from "./pages/PantryManagement";
+
 
 const UserManagement = () => (
   <div className="text-white p-10 text-center bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 animate-in fade-in duration-500">
@@ -48,7 +50,8 @@ export const router = createBrowserRouter([
       { path: "diet-filter", element: <DietFilter /> }, 
       { path: "profile/:userId", element: <Profile /> },
       { path: "shopping-list", element: <ShoppingList /> },
-      { path: "cooking-history", element: <CookingHistory /> }, // Feature 5
+      { path: "cooking-history", element: <CookingHistory /> },
+      { path: "pantry", element: <PantryManagement /> },
     ]
   },
 

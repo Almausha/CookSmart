@@ -29,7 +29,7 @@ const reviewRoutes = require('./routes/reviewRoutes');             // Feature 2
 const shoppingListRoutes = require('./routes/shoppingListRoutes'); // Feature 3+4
 const historyRoutes = require('./routes/historyRoutes');           // Feature 5
 const analyticsRoutes = require('./routes/analyticsRoutes');       // Feature 5
-
+const pantryRoutes = require('./routes/pantryRoutes');
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
@@ -44,7 +44,7 @@ app.use('/api/reviews', reviewRoutes);                             // Feature 2
 app.use('/api/shopping-list', shoppingListRoutes);                 // Feature 3+4
 app.use('/api/history', historyRoutes);                            // Feature 5
 app.use('/api/analytics', analyticsRoutes);                        // Feature 5
-
+app.use('/api/pantry', pantryRoutes);
 // 5. MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
