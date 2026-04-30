@@ -15,7 +15,7 @@ const fetchUserPantryIngredients = async (userId) => {
     
     if (!pantry || !pantry.ingredients) return [];
     
-    // CRITICAL FIX: Filter out items where the master ingredient no longer exists
+    //  Filter out items where the master ingredient no longer exists
     return pantry.ingredients
       .filter(item => item.ingredientId !== null && item.ingredientId !== undefined) 
       .map(item => ({
