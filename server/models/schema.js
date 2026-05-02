@@ -150,15 +150,15 @@ const HistorySchema = new Schema({
 
 /* ================= EXPORT ================= */
 module.exports = {
-  User: mongoose.model("User", UserSchema),
-  Admin: mongoose.model("Admin", AdminSchema),
-  Ingredient: mongoose.model("Ingredient", IngredientSchema),
-  Pantry: mongoose.model("Pantry", PantrySchema),
-  Recipe: mongoose.model("Recipe", RecipeSchema),
-  Review: mongoose.model("Review", ReviewSchema),
-  SocialCookingFeed: mongoose.model("SocialCookingFeed", SocialCookingFeedSchema),
-  ShoppingList: mongoose.model("ShoppingList", ShoppingListSchema),
-  ShoppingCart: mongoose.model("ShoppingCart", ShoppingCartSchema),
-  Checkout: mongoose.model("Checkout", CheckoutSchema),
-  History: mongoose.model("History", HistorySchema)
+  User: mongoose.models.User || mongoose.model("User", UserSchema),
+  Admin: mongoose.models.Admin || mongoose.model("Admin", AdminSchema),
+  Ingredient: mongoose.models.Ingredient || mongoose.model("Ingredient", IngredientSchema),
+  Pantry: mongoose.models.Pantry || mongoose.model("Pantry", PantrySchema),
+  Recipe: mongoose.models.Recipe || mongoose.model("Recipe", RecipeSchema),
+  Review: mongoose.models.Review || mongoose.model("Review", ReviewSchema),
+  SocialCookingFeed: mongoose.models.SocialCookingFeed || mongoose.model("SocialCookingFeed", SocialCookingFeedSchema), 
+  ShoppingList: mongoose.models.ShoppingList || mongoose.model("ShoppingList", ShoppingListSchema),
+  ShoppingCart: mongoose.models.ShoppingCart || mongoose.model("ShoppingCart", ShoppingCartSchema),
+  Checkout: mongoose.models.Checkout || mongoose.model("Checkout", CheckoutSchema),
+  History: mongoose.models.History || mongoose.model("History", HistorySchema)
 };

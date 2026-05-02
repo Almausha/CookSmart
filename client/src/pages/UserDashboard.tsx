@@ -122,7 +122,7 @@ export default function UserDashboard() {
                 onClick={() => navigate('pantry')}
                 className="group bg-orange-500/10 hover:bg-orange-500/20 text-white border border-orange-500/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
               >
-                <Package2 className="w-6 h-6 text-orange-400" />
+                <Package2 className="w-6 h-6 text-white-400" />
                 My Pantry
               </button>
 
@@ -131,7 +131,7 @@ export default function UserDashboard() {
                 onClick={() => navigate('cooking-history')}
                 className="group bg-purple-500/10 hover:bg-purple-500/20 text-white border border-purple-500/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
               >
-                <History className="w-6 h-6 text-purple-400" />
+                <History className="w-6 h-6 text-white-400" />
                 My History
               </button>
 
@@ -140,7 +140,7 @@ export default function UserDashboard() {
                 onClick={() => navigate('shopping-list')}
                 className="group bg-green-500/10 hover:bg-green-500/20 text-white border border-green-500/20 px-8 py-5 rounded-2xl font-black text-lg transition-all flex items-center gap-3 active:scale-95 cursor-pointer"
               >
-                <ShoppingCart className="w-6 h-6 text-green-400" />
+                <ShoppingCart className="w-6 h-6 text-white-400" />
                 Shopping List
               </button>
             </div>

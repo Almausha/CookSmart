@@ -435,13 +435,13 @@ export default function PantryManagement() {
                         onClick={() => startEdit(item)}
                         className="p-2.5 bg-white/5 hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/30 rounded-2xl transition-all cursor-pointer"
                       >
-                        <Pencil size={14} className="text-orange-400" />
+                        <Pencil size={14} className="text-white-400" />
                       </button>
                       <button
                         onClick={() => handleDelete(ing._id)}
                         className="p-2.5 bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/30 rounded-2xl transition-all cursor-pointer"
                       >
-                        <Trash2 size={14} className="text-red-400" />
+                        <Trash2 size={14} className="text-white-400" />
                       </button>
                       <button
                         onClick={() => setExpandedId(isExpanded ? null : ing._id)}

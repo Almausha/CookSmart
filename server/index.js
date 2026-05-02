@@ -30,6 +30,7 @@ const shoppingListRoutes = require('./routes/shoppingListRoutes'); // Feature 3+
 const historyRoutes = require('./routes/historyRoutes');           // Feature 5
 const analyticsRoutes = require('./routes/analyticsRoutes');       // Feature 5
 const pantryRoutes = require('./routes/pantryRoutes');
+const userManageRoutes = require('./routes/userManageRoutes');   // Admin user management
 
 // 4. Routes Use
 app.use('/api/auth', authRoutes);
@@ -48,6 +49,8 @@ app.use('/api/analytics', analyticsRoutes);                        // Feature 5
 
 
 app.use('/api/pantry', pantryRoutes);
+
+app.use('/api/admin/users', userManageRoutes);
 
 // 5. MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
